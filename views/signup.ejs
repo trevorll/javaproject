@@ -1,0 +1,59 @@
+<% include partials/header %>
+
+<% include partials/alerts %>
+
+
+
+<section id="userSignupForm">
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <div class="card">
+          <div class="card-header text-center">
+            <h4>Admin Sign Up</h4>
+          </div>
+          <div class="card-block">
+            <form class="p-3" action="/auth/admin-signup" method="post">
+              <div class="form-group">
+
+                <div class="form-group">
+                  <label class="form-control-label" >First Name</label>
+                  <input type="text" name="firstName" placeholder="first name" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-control-label" >Last Name</label>
+                  <input type="text" name="lastName" placeholder="last name" class="form-control" required>
+                </div>
+
+
+                <label class="form-control-label" >Pick a username</label>
+                <input type="text" name="username" placeholder="username" class="form-control" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-control-label" >Email</label>
+                <input type="text" name="email" placeholder="email" class="form-control" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-control-label" >password</label>
+                <input type="password" name="password" placeholder="password" class="form-control" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-control-label" >Secret Code</label>
+                <input type="text" name="adminCode" placeholder="Enter Secret Code" class="form-control" required>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-block">Submit</button>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </section>
+
+  <% include partials/footer %>

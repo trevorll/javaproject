@@ -1,0 +1,33 @@
+<% include ../partials/header %>
+<% include ../partials/alerts %>
+<section class="userLoginForm">
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <div class="card">
+          <div class="card-heder text-center">
+            <h4>User Login</h4>
+          </div>
+          <div class="card-block">
+            <form class="p-3" action="/auth/user-login" method="post">
+              <div class="form-group">
+                <label class="form-control-label">Username</label>
+                <input type="text" name="username" placeholder="username" class="form-control" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-control-label">Password</label>
+                <input type="password" name="password" placeholder="password" class="form-control" required>
+              </div>
+              <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<% include ../partials/footer %>

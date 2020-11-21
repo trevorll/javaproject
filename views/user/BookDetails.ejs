@@ -1,0 +1,79 @@
+<% include ../partials/header %>
+<% include ../partials/userNav%>
+
+
+
+<div class="container mt-3">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="card">
+        <div class="card-header text-center">
+          <h4><%=book.title %></h4>
+        </div>
+          <small class="text-muted px-3 py-2">Author: <%=book.author%></small>
+          <small class="text-muted px-3 py-2">ISBN: <%=book.ISBN%></small>
+          <small class="text-muted px-3 py-2">Category: <%=book.category%></small>
+          <small class="text-muted px-3 py-2">In Stock: <%=book.stock%></small>
+        <div class="card-body">
+          <p class="card-text">
+            <%-book.description%>
+          </p>
+        </div>
+
+      </div>
+
+      <div class="card my-3 bg-light">
+        <% if(currentUser) { %>
+          <p class="p-3">
+            <button class="btn btn-primary float-right" type="button"  data-toggle="collapse" data-target="#collapseCommentBox" aria-controls="collapseCommentBox" aria-expanded="false">
+            Leave a comment
+            </button>
+          </p>
+          <div class="collapse" id="collapseCommentBox">
+            <form action="/books/details/<%=book._id%>/comment" method="post">
+              <textarea name="comment" class="form-control"></textarea>
+              <input type="submit" class="btn btn-outline-success btn-sm m-1 float-right" value="Submit">
+            </form>
+          </div>
+        <%}%>
+        <ul class="list-group-items">
+          <%book.comments.forEach((comment) => {%>
+          <li class="list-group-item">
+            <strong><%=comment.author.username%></strong>
+            <span><em> commended on <%=comment.date.toDateString()%></em></span>
+            <p><%=comment.text%></p>
+
+            <% if(currentUser && comment.author.id.equals(currentUser._id)) {%>
+              <button id="edit" class="btn btn-primary px-1 py-0">
+                        <i class="fa fa-pencil">edit</i>
+                    </button>
+
+                    <form class="d-inline" action="/books/details/<%=book._id%>/<%=comment._id%>?_method=DELETE" method="POST">
+                        <button class="btn btn-sm btn-danger px-1 py-0">
+                            <i class="fa fa-trash">delete</i>
+                        </button>
+                    </form>
+
+            <%}%>
+            <div class="d-none" id="editCommentBox">
+                    <form action="/books/details/<%=book._id%>/<%=comment._id%>" method="POST">
+                       <textarea name="comment[text]" class="form-control"><%=comment.text%></textarea>
+                       <input type="submit" class="btn btn-outline-success btn-sm m-1 float-right">
+                    </form>
+                   </div>
+          </li>
+        <%})%>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script src="/static/js/jquery.min.js"></script>
+<script>
+    $('button').on('click',  function() {
+       $(this).prev().toggleClass('d-none');
+      $(this).next().next().toggleClass('d-none');
+    });
+</script>
+<% include ../partials/footer %>
