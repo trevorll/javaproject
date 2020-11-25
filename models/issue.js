@@ -24,6 +24,14 @@ const issueSchema = new mongoose.Schema({
 
        username : String,
    },
+   issued_by: {
+     id : {
+       type: mongoose.Schema.Types.ObjectId,
+       ref: User,
+     },
+     username: String,
+   },
+  return: {tupe:Boolean, default:false},
 });
 
 

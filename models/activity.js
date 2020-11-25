@@ -36,6 +36,13 @@ const activitySchema = new mongoose.Schema({
     entryTime : {
         type : Date,
         default : Date.now(),
+    },
+    issued_by: {
+      id : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: User,
+      },
+      username: String,
     }
 });
 

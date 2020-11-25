@@ -1,5 +1,11 @@
 <% include ../partials/header %>
-<% include ../partials/userNav%>
+
+
+<% if(currentUser.isAdmin){ %>
+  <% include ../partials/adminNav %>
+<%}else { %>
+  <% include ../partials/userNav %>
+<% } %>
 
 
 

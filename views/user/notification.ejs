@@ -44,20 +44,107 @@
                     </form></td>
                   </tr>
                 <% }else if(notification.category == "Update Profile Info") {%>
+                  <tr>
                   <td>You recently <span class="table-text">updated your profile information</span> on <%=notification.entryTime.toDateString()%></td>
                   <td><form class="d-inline" action="/user/1/notification/<%=notification._id%>?_method=DELETE" method="POST">
                       <button class="btn btn-sm btn-danger px-1 py-0">Dismiss
                           <i class="fa fa-trash"></i>
                       </button>
                   </form></td>
+                  </tr>
 
                 <%}else if(notification.category == "Uploaded New Profile Photo"){%>
+                  <tr>
                   <td>You recently <span class="table-text">uploaded a new profile photo</span> on <%=notification.entryTime.toDateString()%></td>
                   <td><form class="d-inline" action="/user/1/notification/<%=notification._id%>?_method=DELETE" method="POST">
                       <button class="btn btn-sm btn-danger px-1 py-0">Dismiss
                           <i class="fa fa-trash"></i>
                       </button>
                   </form></td>
+                  </tr>
+                <%}else if(notification.category == "Send Borrow Request"){%>
+                  <tr>
+                  <td>You recently <span class="text-warning"> sent a request to borrow a book</span> on <%=notification.entryTime.toDateString()%></td>
+                  <td><form class="d-inline" action="/user/1/notification/<%=notification._id%>?_method=DELETE" method="POST">
+                      <button class="btn btn-sm btn-danger px-1 py-0">Dismiss
+                          <i class="fa fa-trash"></i>
+                      </button>
+                      </form></td>
+                    </tr>
+                <%}else if(notification.category == "Issue"){%>
+                  <tr>
+                  <td>You recently were <span class="text-success"> issued a book titled <%=notification.info.title%> </span> on <%=notification.entryTime.toDateString()%></td>
+                  <td><form class="d-inline" action="/user/1/notification/<%=notification._id%>?_method=DELETE" method="POST">
+                      <button class="btn btn-sm btn-danger px-1 py-0">Dismiss
+                          <i class="fa fa-trash"></i>
+                      </button>
+                    </form></td>
+                  </tr>
+                <%}else if(notification.category == "Send Renew Request"){%>
+                  <tr>
+                  <td>You recently <span class="text-warning"> sent a reques to renew a book  on <%=notification.entryTime.toDateString()%></td>
+                  <td><form class="d-inline" action="/user/1/notification/<%=notification._id%>?_method=DELETE" method="POST">
+                      <button class="btn btn-sm btn-danger px-1 py-0">Dismiss
+                          <i class="fa fa-trash"></i>
+                      </button>
+                      </form></td>
+                  </tr>
+                <%}else if(notification.category == "Send Return Request"){%>
+                  <tr>
+                  <td>You recently <span class="text-warning"> sent a return book request  on <%=notification.entryTime.toDateString()%></td>
+                  <td><form class="d-inline" action="/user/1/notification/<%=notification._id%>?_method=DELETE" method="POST">
+                      <button class="btn btn-sm btn-danger px-1 py-0">Dismiss
+                          <i class="fa fa-trash"></i>
+                      </button></form></td>
+                  </tr>
+                <%}else if(notification.category == "Grant Return"){%>
+                  <tr>
+                  <td>You recently <span class="text-success"> returned a book  on <%=notification.entryTime.toDateString()%></td>
+                  <td><form class="d-inline" action="/user/1/notification/<%=notification._id%>?_method=DELETE" method="POST">
+                      <button class="btn btn-sm btn-danger px-1 py-0">Dismiss
+                          <i class="fa fa-trash"></i>
+                      </button></form></td>
+                  </tr>
+                <%}else if(notification.category == "Flaggged"){%>
+                  <tr>
+                  <td>You recently were <span class="table-text"> flagged or warned on <%=notification.entryTime.toDateString()%></td>
+                  <td><form class="d-inline" action="/user/1/notification/<%=notification._id%>?_method=DELETE" method="POST">
+                      <button class="btn btn-sm btn-danger px-1 py-0">Dismiss
+                          <i class="fa fa-trash"></i>
+                      </button></form></td>
+                  </tr>
+                <%}else if(notification.category == "Unflagged"){%>
+                  <tr>
+                  <td>You recently were <span class="table-text"> Unflagged  on <%=notification.entryTime.toDateString()%></td>
+                  <td><form class="d-inline" action="/user/1/notification/<%=notification._id%>?_method=DELETE" method="POST">
+                      <button class="btn btn-sm btn-danger px-1 py-0">Dismiss
+                          <i class="fa fa-trash"></i>
+                      </button></form></td>
+                  </tr>
+                <%}else if(notification.category == "Decline Request"){%>
+                  <tr>
+                  <td>You recent request <span class="table-text"> was decline  on <%=notification.entryTime.toDateString()%></td>
+                  <td><form class="d-inline" action="/user/1/notification/<%=notification._id%>?_method=DELETE" method="POST">
+                      <button class="btn btn-sm btn-danger px-1 py-0">Dismiss
+                          <i class="fa fa-trash"></i>
+                      </button></form></td>
+                  </tr>
+                <%}else if(notification.category == "Grant Renew"){%>
+                  <tr>
+                  <td>You recently <span class="text-success"> renewed a book  on <%=notification.entryTime.toDateString()%></td>
+                  <td><form class="d-inline" action="/user/1/notification/<%=notification._id%>?_method=DELETE" method="POST">
+                      <button class="btn btn-sm btn-danger px-1 py-0">Dismiss
+                          <i class="fa fa-trash"></i>
+                      </button></form></td>
+                  </tr>
+                <%}else if(notification.category == "Delete My Account"){%>
+                  <tr>
+                  <td>You recently <span class="text-danger"> sent a request to delete your acount on <%=notification.entryTime.toDateString()%></td>
+                  <td><form class="d-inline" action="/user/1/notification/<%=notification._id%>?_method=DELETE" method="POST">
+                      <button class="btn btn-sm btn-danger px-1 py-0">Dismiss
+                          <i class="fa fa-trash"></i>
+                      </button></form></td>
+                  </tr>
                 <%}%>
               <%});%>
             </tbody>
@@ -69,7 +156,7 @@
             <% if (current == 1) { %>
               <li class="page-item disabled"><a class="page-link">First</a></li>
             <% } else { %>
-              <li class="page-item"><a href="/user/1" class="page-link">First</a></li>
+              <li class="page-item"><a href="/user/1/notification/" class="page-link">First</a></li>
             <% } %>
 
             <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
@@ -80,7 +167,7 @@
                         <% if (i == current) { %>
                             <li class="page-item active"><a class="page-link"><%= i %></a></li>
                         <% } else { %>
-                            <li class="page-item"><a class="page-link" href="/user/<%= i %>"><%= i %></a></li>
+                            <li class="page-item"><a class="page-link" href="/user/1/notification/<%= i %>"><%= i %></a></li>
                         <% } %>
                         <% if (i == Number(current) + 4 && i < pages) { %>
                             <li class="page-item disabled"><a class="page-link">...</a></li>
@@ -89,7 +176,7 @@
                     <% if (current == pages) { %>
                         <li class="page-item disabled"><a class="page-link">Last</a></li>
                     <% } else { %>
-                        <li class="page-item"><a href="/user/<%= pages %>" class="page-link">Last</a></li>
+                        <li class="page-item"><a href="/user/1/notification/<%= pages %>" class="page-link">Last</a></li>
                     <% } %>
           </ul>
         </nav>

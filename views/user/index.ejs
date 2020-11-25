@@ -19,23 +19,44 @@
 <!-- ACTIONS -->
 
 <section>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <a href="/books/all/all/1" class="btn btn-primary btn-block">
+          <i class="fa fa-plus"></i> Borrow book
+        </a>
+      </div>
+
+
+      <div class="col-md-4">
+        <a href="/books/return-renew" class="btn btn-info btn-block">
+          <i class="fa fa-retweet"></i> Renew/Return Book
+        </a>
+      </div>
 
 </section>
 
 
 
-<section id="home" class"mt-4">
+<section id="home" class="mt-4">
   <div class="container">
     <div class="row">
       <div class="col-md-3">
         <div class="card">
-          <img src="/images/<%=user.image || "profile.png"%>" class"card-img-top p-1"/>
+          <img src="/images/<%=user.image || "profile.png"%>" class="card-img-top p-1">
           <div class="card-body">
             <p>Name: <%=user.firstName%> <%=user.lastName%></p>
-            <p>Email: <a href="https://mail.google.com/mail/u/0/?view=cm&fs=1&tf=1&source=mailto&to=<%=user.email%>"><%=user.email%></a> </p>
-            <p>Flagged: <%=user.violationFlag%> </p>
+            <p>Email: <%=user.email%> </p>
+            <p>
+              <%if(user.violationFlag==false){%>
+                Flagged: <span class="text-primary"><%=user.violationFlag%></span>
+              <%}else{%>
+                Flagged: <span class="table-text"><%=user.violationFlag%></span>
+              <%}%>
+            </p>
             <p>Fine: ksh. <%=user.fines%> </p>
             <p>Joined: <%=user.joined.toDateString() %></p>
+            <p>Book Issued : <%=user.bookIssueInfo.length%></p>
           </div>
 
         </div>
@@ -44,7 +65,7 @@
       <div class="col-md-9">
         <div class="card">
           <div class="card-header text-center">
-            <h4>Recent Acttivies</h4>
+            <h4>Recent Activities</h4>
           </div>
 
 
@@ -65,17 +86,41 @@
                     <td><%=activity.entryTime.toDateString()%></td>
                   </tr>
                 <% }else if(activity.category == "Update Profile Info") {%>
+                  <tr>
                   <td>You recently <span class="table-text">updated your profile information</span></td>
                   <td><%=activity.category%></td>
                   <td><%=activity.entryTime.toDateString()%></td>
+                  </tr>
                 <%}else if(activity.category == "Uploaded New Profile Photo"){%>
-                  <td>You recently <span class="table-text">uploaded a new profile photo</span></td>
+                  <tr>
+                  <td>You recently <span class="text-warning">uploaded a new profile photo</span></td>
                   <td><%=activity.category%></td>
                   <td><%=activity.entryTime.toDateString()%></td>
+                  </tr>
                 <%}else if(activity.category == "Comment"){%>
-                  <td>You recently <span class="table-text">commented on a book</span></td>
+                  <tr>
+                  <td>You recently <span class="text-primary">commented on a book</span></td>
                   <td><%=activity.category%></td>
                   <td><%=activity.entryTime.toDateString()%></td>
+                  </tr>
+                <%}else if(activity.category == "Issue"){%>
+                  <tr>
+                  <td>You recently were <span class="text-success">issued a book titled <%=activity.info.title%> by <%=activity.issued_by.username%></span></td>
+                  <td><%=activity.category%></td>
+                  <td><%=activity.entryTime.toDateString()%></td>
+                  </tr>
+                <%}else if(activity.category == "Return"){%>
+                  <tr>
+                  <td>You recently <span class="text-success">returned a book titled <%=activity.info.title%></span></td>
+                  <td><%=activity.category%></td>
+                  <td><%=activity.entryTime.toDateString()%></td>
+                  </tr>
+                <%}else if(activity.category == "Renew"){%>
+                  <tr>
+                  <td>You recently <span class="text-success">renewed a book titled <%=activity.info.title%></span></td>
+                  <td><%=activity.category%></td>
+                  <td><%=activity.entryTime.toDateString()%></td>
+                  </tr>
                 <%}%>
               <%});%>
             </tbody>

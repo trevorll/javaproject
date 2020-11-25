@@ -32,11 +32,23 @@
       </div>
 
       <div class="col-md-3">
-        <a href="" class="btn btn-primary btn-block" data-toggle="modal" data-target="#updateProfileModal">
+        <a href="" class="btn btn-warning btn-block" data-toggle="modal" data-target="#updateProfileModal">
           <i class="fa fa-key"></i> Update Profile
         </a>
 
       </div>
+      <% if (currentUser.bookIssueInfo.length > 0) {%>
+      <div class="col-md-3">
+        <a href="" class="btn btn-danger btn-block" disabled title="You have to return all borrowed/renewed books first">
+          <i class="fa fa-key"></i> Delete Profile
+        </a>
+      </div>
+    <%}else{%>
+      <div class="col-md-3">
+        <a href="" class="btn btn-danger btn-block" data-toggle="modal" data-target="#deleteProfileModal">
+          <i class="fa fa-key"></i> Delete Profile
+        </a>
+    <%}%>
 
     </div>
   </div>
@@ -155,6 +167,28 @@
           </div>
           <button id="button" class="btn btn-warning btn-block">Submit</button>
         </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Delete Profile Modal-->
+<div class="modal fade" id="deleteProfileModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteProfileModalLabel">
+          Once you press yes, all of your issues, comments and activities will be deleted permanently. Are you sure?
+        </h5>
+        <button class="close" data-dismiss="modal" ><span>&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <form action="/user/1/delete-profile?_method=DELETE" method="POST">
+
+          <input type="submit" value="Yes" class="btn btn-danger btn-block m-1">
+
+        </form>
+        <input type="button" value="No" data-dismiss="modal" class="btn btn-success btn-block m-1">
       </div>
     </div>
   </div>

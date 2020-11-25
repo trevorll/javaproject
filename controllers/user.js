@@ -8,8 +8,9 @@ const User = require("../models/user"),
       Activity = require("../models/activity"),
       Book = require("../models/book"),
       Issue = require("../models/issue"),
-      Comment = require("../models/comment");
-      Notification = require("../models/notifications")
+      Comment = require("../models/comment"),
+      Notification = require("../models/notifications"),
+      Request = require("../models/request");
 
 // importing utilities
 const deleteImage = require('../utils/delete_image');
@@ -45,7 +46,7 @@ exports.getUserDashboard = async(req, res, next) => {
         res.render("user/index",{
           user : user,
           current: page,
-          activity_count: notification,
+          count_notification: notification,
           pages: Math.ceil(activity_count / PER_PAGE),
           activities: activities,
         });
@@ -62,7 +63,7 @@ exports.getUserProfile = async(req, res, next) => {
       .find({"user_id.id": req.user._id})
       .countDocuments();
     res.render("user/profile", {
-      activity_count: notification,
+      count_notification: notification,
     });
 }
 
@@ -249,9 +250,9 @@ exports.postNewComment = async(req, res, next) => {
           .countDocuments();
 
       res.render("user/notification",{
-        activity_count: count_notification,
+        count_notification: count_notification,
         notifications: notifications,
-        pages: Math.ceil(count_notification / PER_PAGE),
+        pages: Math.ceil((count_notification / PER_PAGE)),
         current: page,
 
       });
@@ -274,3 +275,223 @@ exports.postNewComment = async(req, res, next) => {
     }
 
   }
+  exports.postBorrowBook = async(req, res, next) => {
+    if(req.user.bookIssueInfo.length>=5){
+      req.flash("warning", "you can't borrow more than 5 books at once");
+      return res.redirect("back");
+
+    }
+
+    try{
+      const book = await Book.findById(req.params.book_id);
+      const user = await User.findById(req.params.user_id);
+      const searchObj = {
+        "book_info.id": book._id,
+        "user_id.id": user._id
+      };
+
+      const check = await Request.findOne(searchObj);
+      if(check){
+        req.flash("error", "Borrow request already sent!");
+        return res.redirect("back");
+      };
+
+      const requests = new Request({
+        book_info: {
+          id: book.id,
+          title: book.title,
+          autho: book.author,
+          ISBN: book.ISBN,
+          category: book.category,
+          stock: book.stock,
+        },
+        user_id: {
+          id: user._id,
+          username: user.username,
+        },
+        reason: "Borrow Request",
+      });
+      const notification = new Notification({
+        info:{
+          id: book._id,
+          title: book.title,
+        },
+        category: "Send Borrow Request",
+        user_id:{
+          id:user._id,
+          username: user.username
+        }
+      });
+      await notification.save();
+      await requests.save();
+      req,flash("success", "Request Sent");
+      res.redirect("/books/all/all/1");
+
+
+    }catch(err) {
+      console.log(err)
+      return res.redirect('back');
+    }
+  };
+  exports.getReturnRenew = async(req, res, next) => {
+    const user_id = req.user.id;
+    const count_notification = await Notification.find({"user_id.id": req.user.id}).countDocuments();
+    try {
+      const issue = await Issue.find({"user_id.id":user_id});
+      const activity_count = await Activity
+        .find({"user_id.id": req.user._id})
+        .countDocuments();
+        res.render("user/return-renew",{
+          count_notification:count_notification,
+          user: issue,
+          user_id: user_id,
+          activity_count: activity_count,
+        })
+    } catch (err) {
+      console.log(err);
+
+    }
+
+  }
+
+  exports.postRenewBook = async(req, res, next) => {
+    const searchReq = {
+      "book_info.id": req.params.user_id,
+      "user_id.id": req.params.book_id
+    };
+
+    const check = await Request.findOne(searchReq);
+    if(check){
+      req.flash("warning", "Renew request already sent!");
+      console.log("error");
+      return res.redirect("back");
+    };
+    const searchObj={
+      "user_id.id": req.params.user_id,
+      "book_info.id": req.params.book_id,
+
+    };
+    try{
+
+        const book  = await Book.findById(req.params.book_id);
+        const user = await User.findById(req.params.user_id);
+
+        const request = new Request({
+          book_info: {
+            id: book._id,
+            title: book.title,
+            author: book.author,
+            ISBN: book.ISBN,
+            category: book.category,
+            stock: book.stock,
+          },
+          user_id: {
+            id: user._id,
+            username: user.username,
+          },
+          reason: "Renew book",
+
+        });
+        const notification = new Notification({
+          info:{
+            id: book._id,
+            title: book.title,
+          },
+          category: "Send Renew Request",
+          user_id:{
+            id:user._id,
+            username: user.username
+          }
+        });
+        await request.save();
+        await notification.save();
+        req,flash("success", "Request Sent");
+        res.redirect('back');
+    }catch(err) {
+      console.log(err);
+    }
+
+  };
+  exports.postReturnBook = async(req, res, next) =>{
+    const searchObj = {
+      "book_info.id": req.params.book_id,
+      "user_id.id": req.params.user_id,
+    };
+
+    const check = await Request.findOne(searchObj);
+    if(check){
+      req.flash("error", "Return request already sent!");
+      return res.redirect("back");
+    };
+
+    try {
+      const book_id = req.params.book_id;
+      const book  = await Book.findById(req.params.book_id);
+      const user = await User.findById(req.params.user_id);
+      const request = new Request({
+        book_info: {
+          id: book._id,
+          title: book.title,
+          author: book.author,
+          ISBN: book.ISBN,
+          category: book.category,
+          stock: book.stock,
+        },
+        user_id: {
+          id: user._id,
+          username: user.username,
+        },
+        reason: "Return book",
+
+      });
+      const notification = new Notification({
+        info:{
+          id: book._id,
+          title: book.title,
+        },
+        category: "Send Return Request",
+        user_id:{
+          id:user._id,
+          username: user.username
+        }
+      });
+      await request.save();
+      await notification.save();
+      req.flash("success", "Request sent");
+      res.redirect('back')
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  exports.deleteMyAccount = async(req, res, next) => {
+    const check = await Request.findOne({"user_id.id": req.user._id});
+    if(check){
+      req.flash("error", "Delete Request Already sent");
+      return res.redirect("back");
+    }
+
+    try {
+      const request = new Request({
+        user_id: {
+          id: req.user._id,
+          username: req.user.username,
+        },
+        reason: "Delete User Account",
+
+      });
+
+      const notification = new Notification({
+        category: "Delete My Account",
+        user_id:{
+          id: req.user._id,
+          username: req.user.username
+        }
+      });
+      await request.save();
+      await notification.save();
+      req.flash("success", "Request Sent Successfylly")
+      res.redirect('back')
+    } catch (err) {
+      console.log(err);
+    }
+  };

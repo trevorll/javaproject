@@ -14,6 +14,8 @@ const express = require("express");
 
       User = require("./models/user");
       Admin = require("./models/admin");
+      Issue = require("./models/issue");
+      Request = require("./models/request");
       userRoutes = require("./routes/users");
       authRoutes = require("./routes/auth");
       bookRoutes = require("./routes/books");

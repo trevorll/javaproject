@@ -1,0 +1,142 @@
+<% include ../partials/header %>
+
+<% include ../partials/adminNav %>
+
+
+<header id="main-header" class="py-2 bg-info text-white">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <h1><i class="fa fa-bell"></i></h1>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+<section id="home" class"mt-4">
+  <div class="container">
+    <div class="Browse">
+      <div class="row">
+      <div class="col-md-9">
+        <div class="card">
+          <div class="card-header text-center">
+            <h4>Notifications</h4>
+          </div>
+
+<% include ../partials/alerts %>
+          <table class="table table-striped">
+            <thead class="thead-inverse">
+              <tr>
+                <th>Info</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% requests.forEach((request => {%>
+                <%if(request.reason == "Borrow Request"){%>
+                  <td>the user <a href="/admin/userinfo/<%=request.user_id.id %>"><%=request.user_id.username %></a> has sent a borrow request to be given the book <a href="/books/details/<%=request.book_info.id%>"><span class="table-text"><%=request.book_info.title %></span></a></td>
+
+                  <td>
+                    <form class="d-inline" action="/admin/grant/borrow/<%=request._id%>?_method=POST" method="POST">
+                      <button class="btn btn-sm btn-danger px-1 py-0">Grant
+                          <i class="fa fa-trash"></i></button></form>
+                  </td>
+                  <td>
+                    <form class="d-inline" action="/admin/decline/request/<%=request._id%>/book/<%=request.book_info.id%>/user/<%=request.user_id.id%>?_method=DELETE" method="POST">
+                      <button class="btn btn-sm btn-danger px-1 py-0">Decline
+                          <i class="fa fa-trash"></i> </button></form>
+                  </td>
+
+
+                <%}else if(request.reason == "Renew book"){%>
+                  <td>the user <a href="/admin/userinfo/<%=request.user_id.id %>"><%=request.user_id.username %></a> has sent a request to renew the  book <a href="/books/details/<%=request.book_info.id%>"><span class="table-text"><%=request.book_info.title %></span></a></td>
+
+                  <td>
+                    <form class="d-inline" action="/admin/renew/request/<%=request._id%>/book/<%=request.book_info.id%>/user/<%=request.user_id.id%>?_method=GET" method="GET">
+                      <button class="btn btn-sm btn-danger px-1 py-0">Grant
+                          <i class="fa fa-trash"></i></button></form>
+                  </td>
+                  <td>
+                    <form class="d-inline" action="/admin/decline/request/<%=request._id%>/book/<%=request.book_info.id%>/user/<%=request.user_id.id%>?_method=DELETE" method="POST">
+                      <button class="btn btn-sm btn-danger px-1 py-0">Decline
+                          <i class="fa fa-trash"></i> </button></form>
+                  </td>
+
+
+                <%}else if(request.reason == "Return book"){%>
+                  <td>the user <a href="/admin/userinfo/<%=request.user_id.id %>"><%=request.user_id.username %></a> has sent a request to return the  book <a href="/books/details/<%=request.book_info.id%>"><span class="table-text"><%=request.book_info.title %></span></a></td>
+
+                  <td>
+                    <form class="d-inline" action="/admin/return/request/<%=request._id%>/book/<%=request.book_info.id%>/user/<%=request.user_id.id%>?_method=POST" method="POST">
+                      <button class="btn btn-sm btn-danger px-1 py-0">Grant
+                          <i class="fa fa-trash"></i></button></form>
+                  </td>
+                  <td>
+                    <form class="d-inline" action="/admin/decline/request/<%=request._id%>/book/<%=request.book_info.id%>/user/<%=request.user_id.id%>?_method=DELETE" method="POST">
+                      <button class="btn btn-sm btn-danger px-1 py-0">Decline
+                          <i class="fa fa-trash"></i> </button></form>
+
+                <%}else if(request.reason == "Delete User Account"){%>
+                  <td>the user <a href="/admin/userinfo/<%=request.user_id.id %>"><%=request.user_id.username %></a> <span class="text-danger">has sent a request to <b>DELETE</b></span> their  Account</td>
+
+                  <td>
+                    <form class="d-inline" action="/admin/delete/request/<%=request._id%>/user/<%=request.user_id.id%>?_method=POST" method="POST">
+                      <button class="btn btn-sm btn-danger px-1 py-0">Grant
+                          <i class="fa fa-trash"></i></button></form>
+                  </td>
+                  <td>
+                    <form class="d-inline" action="/admin/decline/request/<%=request._id%>/book/<%=request.book_info.id%>/user/<%=request.user_id.id%>?_method=DELETE" method="POST">
+                      <button class="btn btn-sm btn-danger px-1 py-0">Decline
+                          <i class="fa fa-trash"></i> </button></form>
+
+                <%}%>
+              <%}));%>
+            </tbody>
+          </table>
+          <% if (pages > 0) { %>
+        <nav class="ml-3 mb-2">
+          <ul class="pagination offset-md-3">
+
+            <% if (current == 1) { %>
+              <li class="page-item disabled"><a class="page-link">First</a></li>
+            <% } else { %>
+              <li class="page-item"><a href="/user/1" class="page-link">First</a></li>
+            <% } %>
+
+            <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
+                    <% if (i !== 1) { %>
+                        <li class="page-item disabled"><a class="page-link">...</a></li>
+                    <% } %>
+                    <% for (; i <= (Number(current) + 4) && i <= pages; i++) { %>
+                        <% if (i == current) { %>
+                            <li class="page-item active"><a class="page-link"><%= i %></a></li>
+                        <% } else { %>
+                            <li class="page-item"><a class="page-link" href="/user/<%= i %>"><%= i %></a></li>
+                        <% } %>
+                        <% if (i == Number(current) + 4 && i < pages) { %>
+                            <li class="page-item disabled"><a class="page-link">...</a></li>
+                        <% } %>
+                    <% } %>
+                    <% if (current == pages) { %>
+                        <li class="page-item disabled"><a class="page-link">Last</a></li>
+                    <% } else { %>
+                        <li class="page-item"><a href="/user/<%= pages %>" class="page-link">Last</a></li>
+                    <% } %>
+          </ul>
+        </nav>
+     <% } %>
+
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+
+</section>
+
+
+<% include ../partials/footer %>

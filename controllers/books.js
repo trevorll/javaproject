@@ -1,8 +1,13 @@
 const Book = require('../models/book');
+const Request = require('../models/request');
+const Notification = require('../models/notifications');
 const PER_PAGE = 16;
 
 
+
 exports.getBooks = async(req, res, next) => {
+  const count_requests = await Request.find().countDocuments();
+  const count_notification = await Notification.find({"user_id.id": req.user.id}).countDocuments();
   var page = req.params.page || 1;
   const filter = req.params.filter;
   const value = req.params.value;
@@ -28,19 +33,23 @@ exports.getBooks = async(req, res, next) => {
       pages: Math.ceil(count/PER_PAGE),
       filter: filter,
       value: value,
-      user: req.user
+      user: req.user,
+      count_requests:count_requests,
+      count_notification:count_notification,
     })
   } catch(err) {
     console.log(err)
   }
 },
 exports.findBooks = async(req, res, next) => {
+  const count_requests = await Request.find().countDocuments();
+  const count_notification = await Notification.find({"user_id.id": req.user.id}).countDocuments();
   var page = req.params.page ||1;
   const filter = req.body.filter.toLowerCase();
   const value = req.body.searchName;
 
-  if(value == ""){
-    req.flash("error", "Search field is empty. Please fill the search field to get books");
+  if(value == "" || filter=="select filter..."){
+    req.flash("error", "Search field or Select field is empty. Please fill the search field to get books");
     res.redirect("back");
   }
   const searchObj = {};
@@ -60,17 +69,21 @@ exports.findBooks = async(req, res, next) => {
       filter:filter,
       value: value,
       user: req.user,
+      count_requests:count_requests,
+      count_notification:count_notification,
     })
   } catch(err) {
     console.log(err)
   }
-}
+};
  exports.getBookDetails = async(req, res, next) => {
+   const count_requests = await Request.find().countDocuments();
+   const count_notification = await Notification.find({"user_id.id": req.user.id}).countDocuments();
    try{
      const book_id = req.params.book_id;
      const book = await Book.findById(book_id).populate("comments");
-     res.render("user/BookDetails", {book: book});
+     res.render("user/BookDetails", {book: book, count_requests:count_requests, count_notification:count_notification,});
    }catch(err) {
      console.log(err);
    }
- }
+ };
