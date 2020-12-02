@@ -547,6 +547,7 @@ exports.deleteDeclineRequest = async(req, res, next) => {
     await notification.save();
 
     await Request.findByIdAndRemove(request_id);
+    res.redirect("back");
 
     }catch(err){
       console.log(err);
@@ -576,5 +577,128 @@ exports.deleteDeclineRequest = async(req, res, next) => {
 } catch (err) {
     console.log(err);
     res.redirect('back');
+}
+};
+exports.getChart = async(req, res, next) => {
+  const theme = req.params.theme;
+  const type = req.params.type || "line";
+  const heading = req.params.heading;
+  var labels = [];
+  var number = [];
+  var track = [];
+  const users= await User.find();
+  const count_users = await User.find().countDocuments();
+  const count_requests = await Request.find().countDocuments();
+  for(let user of users){
+    const month = user.joined.getMonth()+1;
+    const year = user.joined.getFullYear();
+    const date = user.joined.getDate();
+    const fullDate = `${date}/${month}/${year}`;
+    var n = labels.includes(fullDate);
+    track.push(fullDate);
+    if(n){
+      continue;
+    }
+    labels.push(fullDate);
+  };
+
+
+var count=0;
+for(var i = 0; i < labels.length; i++){
+  count=0;
+  for(var j=0; j<track.length; j++){
+    if(labels[i] == track[j]){
+        count++;
+
+  }
+}
+number.push(count)
+};
+
+  res.render("user/chart",{
+    users:users,
+    count_users:count_users,
+    theme:theme,
+    labels:labels,
+    heading:heading,
+    type: type,
+    number:number,
+    count_requests:count_requests
+  });
+};
+
+exports.getActivitiesChart = async(req, res, next) => {
+  const theme = req.params.theme;
+  const type = req.params.type || "line";
+  const heading = req.params.heading;
+  var labels = [];
+  var number = [];
+  var track = [];
+  const activities= await Activity.find();
+  const count_users = await User.find().countDocuments();
+  const count_requests = await Request.find().countDocuments();
+  for(let activity of activities){
+    const month = activity.entryTime.getMonth()+1;
+    const year = activity.entryTime.getFullYear();
+    const date = activity.entryTime.getDate();
+    const fullDate = `${date}/${month}/${year}`;
+    var n = labels.includes(fullDate);
+    track.push(fullDate);
+    if(n){
+      continue;
+    }
+    labels.push(fullDate);
+  };
+
+
+var count=0;
+for(var i = 0; i < labels.length; i++){
+  count=0;
+  for(var j=0; j<track.length; j++){
+    if(labels[i] == track[j]){
+        count++;
+
+  }
+}
+number.push(count)
+};
+
+  res.render("user/chart",{
+    users:activities,
+    count_users:count_users,
+    theme:theme,
+    labels:labels,
+    heading:heading,
+    type: type,
+    number:number,
+    count_requests:count_requests
+  });
+}
+exports.deleteUser = async(req, res, next) => {
+  const user_id = req.params.user_id;
+  const user = await User.findById(user_id);
+  if(user.bookIssueInfo.length > 0) {
+    req.flash("error","this user has books in possession therefore cant be deleted");
+    return res.redirect('back');
+  }
+  try {
+  await user.remove();
+
+  let imagePath = `images/${user.image}`;
+  if(fs.existsSync(imagePath)) {
+      deleteImage(imagePath);
+  }
+
+  await Issue.deleteMany({"user_id.id": user_id});
+  await Comment.deleteMany({"author.id":user_id});
+  await Activity.deleteMany({"user_id.id": user_id});
+  await Notification.deleteMany({"user_id.id": user_id});
+  req.flash("success", "User Successfully deleted");
+
+
+  res.redirect("back");
+} catch (err) {
+  console.log(err);
+  res.redirect('back');
 }
 };

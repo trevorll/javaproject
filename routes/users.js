@@ -9,7 +9,7 @@ const userController = require('../controllers/user');
 // user -> dashboard
 router.get("/user/:page", middleware.isLoggedIn, userController.getUserDashboard);
 router.get("/user/1/notification/:page", middleware.isLoggedIn, userController.getNotification);
-
+router.get("/users/1/chart/:theme/:heading", middleware.isLoggedIn, userController.getChart);
 // user -> profile
 router.get("/user/1/profile", middleware.isLoggedIn, userController.getUserProfile);
 

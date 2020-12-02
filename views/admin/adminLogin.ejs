@@ -1,6 +1,6 @@
 <% include ../partials/header %>
 <% include ../partials/back %>
-<% include ../partials/alerts %>
+
 
 <section id="getAdminLoginPage">
   <div class="container mt-5">
@@ -8,6 +8,7 @@
       <div class="col-md-6 offset-md-3">
         <div class="card-header text-center">
           <h4>Admin Login</h4>
+          <% include ../partials/alerts %>
         </div>
         <div class="card-block">
           <form class="p-3" action="/auth/admin-login" method="post">

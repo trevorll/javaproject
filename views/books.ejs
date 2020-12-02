@@ -106,7 +106,7 @@
 
 <!--BOOKS-->
 <section id="browse_books" class="mt-5">
-  <div class="container">
+  <div onLoad="JavaScript:timeRefresh(60000);" class="container">
 
     <div class="row">
     <% for(var i = 0; i < books.length; i++) { %>
@@ -126,6 +126,7 @@
 
             <% if(currentUser && !currentUser.isAdmin && books[i].stock > 0) { var match = false%>
                 <% user.bookIssueInfo.forEach(book_info => { %>
+
                     <% if(book_info._id.equals(books[i]._id)) { %>
                        <a href="#" class="btn btn-xs btn-warning disabled" role="button" aria-disabled="true">Issued!</a>
                        <a href="/books/return-renew" class="btn btn-xs btn-success" role="button">Return/Renew</a>

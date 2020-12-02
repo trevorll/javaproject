@@ -1,0 +1,127 @@
+<% include ../partials/header %>
+<% if(currentUser.isAdmin){ %>
+  <% include ../partials/adminNav %>
+	<section  class="my-3 py-4 bg-light">
+	  <div class="container">
+	    <div class="row">
+				<ul class="navbar-nav ml-auto">
+					<li class="nav-item dropdown mr-3">
+						<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+							<i class="fa fa-user"></i> change theme
+						</a>
+						<div class="dropdown-menu">
+							<a href="/admin/users/chart/<%="light1"%>/<%="Number of users that join per day"%>" class="dropdown-item">
+								<i class="fa fa-user-circle"></i> light1
+							</a>
+
+							<a href="/admin/users/chart/<%="light2"%>/<%="Number of users that join per day"%>" class="dropdown-item">
+								<i class="fa fa-user-times"></i> light2
+							</a>
+							<a href="/admin/users/chart/<%="dark1"%>/<%="Number of users that join per day"%>" class="dropdown-item">
+								<i class="fa fa-user-times"></i> dark1
+							</a>
+							<a href="/admin/users/chart/<%="dark2"%>/<%="Number of users that join per day"%>" class="dropdown-item">
+								<i class="fa fa-user-times"></i> dark2
+							</a>
+						</div>
+					</li>
+				</ul>
+        <ul class="navbar-nav ml-auto">
+					<li class="nav-item dropdown mr-3">
+						<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+							<i class="fa fa-user"></i> change  to user Graph activities
+						</a>
+						<div class="dropdown-menu">
+							<a href="/admin/users/activities/chart/<%="light1"%>/<%="Number of users activities per day"%>" class="dropdown-item">
+								<i class="fa fa-user-circle"></i> light1
+							</a>
+
+							<a href="/admin/users/activities/chart/<%="light2"%>/<%="Number of users activities per day"%>" class="dropdown-item">
+								<i class="fa fa-user-times"></i> light2
+							</a>
+							<a href="/admin/users/activities/chart/<%="dark1"%>/<%="Number of users activities per day"%>" class="dropdown-item">
+								<i class="fa fa-user-times"></i> dark1
+							</a>
+							<a href="/admin/users/activities/chart/<%="dark2"%>/<%="Number of users activities per day"%>" class="dropdown-item">
+								<i class="fa fa-user-times"></i> dark2
+							</a>
+						</div>
+					</li>
+				</ul>
+      </div>
+    </div>
+				</section>
+
+<%}else { %>
+  <% include ../partials/userNav %>
+	<section  class="my-3 py-4 bg-light">
+	  <div class="container">
+	    <div class="row">
+				<ul class="navbar-nav ml-auto">
+					<li class="nav-item dropdown mr-3">
+						<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+							<i class="fa fa-user"></i> change theme
+						</a>
+						<div class="dropdown-menu">
+							<a href="/users/1/chart/<%="light1"%>/<%="Graph showing user activities per day"%>" class="dropdown-item">
+								<i class="fa fa-user-circle"></i> light1
+							</a>
+
+							<a href="/users/1/chart/<%="light2"%>/<%="Graph showing user activities per day"%>" class="dropdown-item">
+								<i class="fa fa-user-times"></i> light2
+							</a>
+							<a href="/users/1/chart/<%="dark1"%>/<%="Graph showing user activities per day"%>" class="dropdown-item">
+								<i class="fa fa-user-times"></i> dark1
+							</a>
+							<a href="/users/1/chart/<%="dark2"%>/<%="Graph showing user activities per day"%>" class="dropdown-item">
+								<i class="fa fa-user-times"></i> dark2
+							</a>
+						</div>
+					</li>
+				</ul>
+      </div>
+    </div>
+				</section>
+
+<% } %>
+
+
+
+<div onLoad="JavaScript:timeRefresh(30000);" class="container mt-5 p-1">
+	<div class="row">
+		<div class="col-md-9">
+
+
+
+
+<script type="text/javascript">
+window.onload = function () {
+
+var chart = new CanvasJS.Chart("chartContainer", {
+	theme: "<%=theme%>", // "light2", "dark1", "dark2"
+	animationEnabled: true, // change to true
+	title:{
+		text: "<%=heading%>"
+	},
+		// Change type to "bar", "area", "spline", "pie",etc.
+	data:	[
+	{
+		type: "<%=type%>",
+		dataPoints:[
+		<% for(let j=0; j< labels.length; j++) { %>
+				{label:"<%=labels[j]%>", y:<%=number[j]%>},
+		<%}%>
+		]
+	}
+]
+});
+chart.render();
+
+}
+</script>
+<div id="chartContainer" style="height: 370px; width: auto; position:center"></div>
+<script src="/static/canvasjs.min.js"> </script>
+</div>
+</div>
+</div>
+<% include ../partials/footer %>

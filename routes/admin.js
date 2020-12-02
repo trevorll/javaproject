@@ -17,6 +17,9 @@ const adminController = require('../controllers/admin');
 //gets admin dashboard
 router.get("/admin",middleware.isAdmin, adminController.getDashboard);
 router.post("/admin/:page",middleware.isAdmin, adminController.postDashboard);
+router.get("/admin/users/chart/:theme/:heading", middleware.isAdmin, adminController.getChart);
+router.get("/admin/users/activities/chart/:theme/:heading", middleware.isAdmin, adminController.getActivitiesChart);
+router.get("/admin/users/chart/:type", middleware.isAdmin, adminController.getChart);
 
 
 //gets and posts a new book
@@ -38,6 +41,7 @@ router.delete("/admin/decline/request/:request_id/book/:book_id/user/:user_id", 
 router.post("/admin/return/request/:request_id/book/:book_id/user/:user_id", middleware.isAdmin, adminController.postReturnBook);
 //grant delete user Profile
 router.post("/admin/delete/request/:request_id/user/:user_id", middleware.isAdmin, adminController.deleteUserAccount);
+router.get("/admin/users/delete/:user_id", middleware.isAdmin, adminController.deleteUser)
 //get all users
 router.get("/admin/users/:page", middleware.isAdmin, adminController.getUsers);
 

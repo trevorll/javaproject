@@ -27,6 +27,21 @@ exports.getUserDashboard = async(req, res, next) => {
         // fetch user info from db and populate it with related book issue
         const user = await User.findById(user_id);
 
+        if(user.bookIssueInfo.length > 0) {
+            const issues = await Issue.find({"user_id.id" : user._id});
+
+            for(let issue of issues) {
+                if(issue.book_info.returnDate < Date.now()) {
+                    const penalty = (((Date.now()-issue.book_info.returnDate)/1000000000)*5);
+                    user.fines = penalty;
+                    user.violationFlag = true;
+                    user.save();
+                    req.flash("warning", "You are flagged for not returning " + issue.book_info.title + " in time");
+                    break;
+                }
+            }
+        };
+
         const activities = await Activity
             .find({"user_id.id": req.user._id})
             .sort('-entryTime')
@@ -324,7 +339,7 @@ exports.postNewComment = async(req, res, next) => {
       });
       await notification.save();
       await requests.save();
-      req,flash("success", "Request Sent");
+      req.flash("success", "Request Sent");
       res.redirect("/books/all/all/1");
 
 
@@ -495,3 +510,53 @@ exports.postNewComment = async(req, res, next) => {
       console.log(err);
     }
   };
+  exports.getChart = async(req, res, next) => {
+    const theme = req.params.theme;
+    const type = req.params.type || "line";
+    const heading = req.params.heading;
+    var labels = [];
+    var number = [];
+    var track = [];
+    const users= await User.find();
+    const count_users = await User.find().countDocuments();
+    const activities = await Activity.find({"user_id.id": req.user._id});
+    const count_notification = await Notification.find({"user_id.id": req.user._id}).countDocuments();
+
+    for(let activity of activities){
+      const month = activity.entryTime.getMonth()+1;
+      const year = activity.entryTime.getFullYear();
+      const date = activity.entryTime.getDate();
+      const fullDate = `${date}/${month}/${year}`;
+      var n = labels.includes(fullDate);
+      track.push(fullDate);
+      if(n){
+        continue;
+      }
+      labels.push(fullDate);
+    };
+
+
+  var count=0;
+  for(var i = 0; i < labels.length; i++){
+    count=0;
+    for(var j=0; j<track.length; j++){
+      if(labels[i] == track[j]){
+          count++;
+
+    }
+  }
+  number.push(count)
+};
+
+    res.render("user/chart",{
+      users:users,
+      count_users:count_users,
+      count_notification:count_notification,
+      type:type,
+      theme: theme,
+      heading: heading,
+      labels:labels,
+      number:number,
+
+    });
+  }

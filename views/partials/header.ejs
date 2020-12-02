@@ -17,5 +17,13 @@
         <title>Library Manangement System</title>
 
     </head>
-
-    <body>
+    <script type="text/JavaScript">
+        function timeRefresh(timeoutPeriod) {
+            setTimeout("location.reload(true);", timeoutPeriod);
+        }
+    </script>
+    <% if (currentUser) {%>
+      <body onLoad="JavaScript:timeRefresh(60000);">
+    <%}else{%>
+      <body>
+    <%}%>

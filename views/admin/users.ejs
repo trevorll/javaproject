@@ -41,7 +41,7 @@
 
 <!-- USERS -->
 <section id="users">
-  <div class="container">
+  <div onLoad="JavaScript:timeRefresh(60000);" class="container">
     <div class="row">
       <div class="col">
         <div class="card">
@@ -75,7 +75,7 @@
                 <td>$<%=user.fines%></td>
                 <td>
                   <%if(user.bookIssueInfo.length > 0) { %>
-                  <a href="/admin/users/delete/<%=user._id%>" title="This user has books in possession. Are you sure to delete this user?" class="btn btn-sm btn-danger">
+                  <a href="/admin/users/delete/<%=user._id%>" title="This user has books in possession. you cannot delete this user" class="btn btn-sm btn-danger">
                     <i class="fa fa-trash"></i>
                   </a>
                 <%  } else { %>
