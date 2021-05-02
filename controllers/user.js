@@ -28,12 +28,13 @@ exports.getUserDashboard = async(req, res, next) => {
     try {
         // fetch user info from db and populate it with related book issue
         const user = await User.findById(user_id);
-
+        
+        //check whether the return date has passed and fine the user if ita has passed
         if(user.bookIssueInfo.length > 0) {
             const issues = await Issue.find({"user_id.id" : user._id});
 
             for(let issue of issues) {
-                if(issue.book_info.returnDate < Date.now() && issue.book_info.isPaid==false) {
+                if(issue.book_info.returnDate < Date.now()) {
                     const penalty = Math.floor((((Date.now()-issue.book_info.returnDate)/(1*24*60*60*1000))*5));
                     if(user.fine < 0){
                       user.fines+=penalty;
@@ -53,9 +54,11 @@ exports.getUserDashboard = async(req, res, next) => {
                     break;
                     }
                 }
+
             }
         };
-
+        
+        //fetch user activities fro the database
         const activities = await Activity
             .find({"user_id.id": req.user._id})
             .sort('-entryTime')
@@ -70,8 +73,7 @@ exports.getUserDashboard = async(req, res, next) => {
             .find({"user_id.id": req.user._id})
             .countDocuments();
 
-
-
+        //render the index template
         res.render("user/index",{
           user : user,
           current: page,
@@ -95,7 +97,7 @@ exports.getUserProfile = async(req, res, next) => {
       count_notification: notification,
     });
 }
-
+//update user password
 exports.putUpdatePassword = async(req, res, next) => {
   const username = req.user.username;
   const oldPassword = req.body.oldPassword;
@@ -175,7 +177,7 @@ exports.putUpdatePassword = async(req, res, next) => {
    return res.redirect('back')
  }
 }
-
+//upload user image
 exports.postUploadUserImage = async(req, res, next) => {
   try {
     const user_id = req.user._id;
@@ -190,7 +192,7 @@ exports.postUploadUserImage = async(req, res, next) => {
 
       const imageExist = fs.existsSync(previousImagePath);
 
-
+      //check wheter the user profile picture already exists
       if(imageExist) {
         deleteImage(previousImagePath);
       }
@@ -200,7 +202,7 @@ exports.postUploadUserImage = async(req, res, next) => {
           .toFile(filename);
       fs.unlink(req.file.path, err => {
         if(err) {
-          console.log(err);
+          console.log("No image to delete");
         }
       })
     }else {
@@ -208,7 +210,7 @@ exports.postUploadUserImage = async(req, res, next) => {
     }
     user.image = imageUrl;
     await user.save();
-
+    //saving activity
     const activity = new Activity({
       category: "Uploaded New Profile Photo",
       user_id: {
@@ -223,6 +225,8 @@ exports.postUploadUserImage = async(req, res, next) => {
     res.redirect('back');
   }
 };
+
+//post a new comment on a book
 exports.postNewComment = async(req, res, next) => {
   try{
       const comment_text = req.body.comment;
@@ -263,6 +267,7 @@ exports.postNewComment = async(req, res, next) => {
       return res.redirect("back");
     }
   };
+  //update existing comment
   exports.postUpdateComment = async(req, res, next) => {
     try{
         const newComment_text = req.body.comment;
@@ -288,6 +293,7 @@ exports.postNewComment = async(req, res, next) => {
         return res.redirect("back");
       }
     };
+    //Delete a user comment
     exports.deleteComment = async(req, res, next) => {
       try{
           const comment_id = req.body.comment_id;
@@ -321,7 +327,7 @@ exports.postNewComment = async(req, res, next) => {
           return res.redirect("back");
         }
       };
-
+    //fetch user notiication from the database
   exports.getNotification = async(req, res, next) =>{
     const user_id = req.user._id;
     var page = req.params.page || 1;
@@ -349,6 +355,7 @@ exports.postNewComment = async(req, res, next) => {
     }
 
   };
+  //Delete user notification
   exports.deleteNotification = async(req, res, next) => {
     const user_id = req.user._id;
     var page = req.params.page || 1;
@@ -363,6 +370,7 @@ exports.postNewComment = async(req, res, next) => {
     }
 
   }
+  //Borrow a book from the library
   exports.postBorrowBook = async(req, res, next) => {
     if(req.user.bookIssueInfo.length>=5){
       req.flash("warning", "you can't borrow more than 5 books at once");
@@ -427,6 +435,7 @@ exports.postNewComment = async(req, res, next) => {
       return res.redirect('back');
     }
   };
+  //Return an already borrowed book
   exports.getReturnRenew = async(req, res, next) => {
     const user_id = req.user.id;
     const count_notification = await Notification.find({"user_id.id": req.user.id}).countDocuments();
@@ -448,6 +457,7 @@ exports.postNewComment = async(req, res, next) => {
 
   }
 
+//Renew a borrowed book
   exports.postRenewBook = async(req, res, next) => {
     const searchReq = {
       "book_info.id": req.params.user_id,
@@ -506,6 +516,7 @@ exports.postNewComment = async(req, res, next) => {
     }
 
   };
+  //Return a borrowed book
   exports.postReturnBook = async(req, res, next) =>{
     const searchObj = {
       "book_info.id": req.params.book_id,
@@ -519,7 +530,7 @@ exports.postNewComment = async(req, res, next) => {
     }else if(check){
       req.flash("error", "Return request already sent!");
       return res.redirect("back");
-    };
+    }else{
 
     try {
       const book_id = req.params.book_id;
@@ -559,7 +570,9 @@ exports.postNewComment = async(req, res, next) => {
     } catch (err) {
       console.log(err);
     }
+  }
   };
+  //Send request to delete the account
   exports.deleteMyAccount = async(req, res, next) => {
     const check = await Request.findOne({"user_id.id": req.user._id});
     if(check){
@@ -592,6 +605,7 @@ exports.postNewComment = async(req, res, next) => {
       console.log(err);
     }
   };
+  //Draw a graph for your activities per day
   exports.getChart = async(req, res, next) => {
     const heading = req.params.heading;
     var labels = [];

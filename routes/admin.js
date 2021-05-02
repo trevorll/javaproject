@@ -68,6 +68,9 @@ router.get("/admin/book/update/:book_id", middleware.isAdmin, adminController.ge
 router.post("/admin/details/:book_id/comment", middleware.isAdmin, adminController.postNewComment);
 router.post("/admin/details/:book_id/:comment_id", middleware.isAdmin, adminController.postUpdateComment);
 router.delete("/admin/details/:book_id/:comment_id", middleware.isAdmin, adminController.deleteComment);
+//show more
+router.get("/admin/users/activities/:user_id", middleware.isAdmin, adminController.getUserAllActivities);
+router.post("/admin/users/activities/:user_id", middleware.isAdmin, adminController.postShowActivitiesByCategory);
 
 
 

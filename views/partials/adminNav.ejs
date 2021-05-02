@@ -67,3 +67,28 @@
       </div>
     </div>
 </nav>
+<!-- payment Modal -->
+<div class="modal fade" id="paymentModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="paymentModalLabel">Pay fines</h5>
+        <button class="close" data-dismiss="modal"><span>&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <form action="/admin/user/payment?_method=PUT" method="post">
+          <div class="form-group">
+            <label for="username" class="form-conrol-label">username</label>
+            <input type="text" name="username" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="amount" class="form-conrol-label">Amount</label>
+            <input id="amount" type="number" name="amount" class="form-control">
+          </div>
+          <button id="button" class="btn btn-primary btn-block">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

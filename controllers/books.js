@@ -7,10 +7,15 @@ const PER_PAGE = 16;
 
 exports.getBooks = async(req, res, next) => {
   const count_requests = await Request.find().countDocuments();
-  const count_notification = await Notification.find({"user_id.id": req.user._id}).countDocuments();
+  let count_notification;
   var page = req.params.page || 1;
   const filter = req.params.filter;
   const value = req.params.value;
+  if(req.user.isAdmin){
+    count_notification = await Request.find({"user_id.id": req.user._id}).countDocuments();
+  }else{
+    count_notification = await Notification.find({"user_id.id": req.user._id}).countDocuments();
+  }
 
   let searchObj = {};
 
@@ -45,7 +50,7 @@ exports.findBooks = async(req, res, next) => {
   const count_requests = await Request.find().countDocuments();
   const count_notification = await Notification.find({"user_id.id": req.user.id}).countDocuments();
   var page = req.params.page ||1;
-  const filter = req.body.filter.toLowerCase();
+  const filter = req.body.filter.toLowerCase() ;
   const value = req.body.searchName;
 
   if(value == "" || filter=="select filter..."){

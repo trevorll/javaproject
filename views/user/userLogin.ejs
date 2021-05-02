@@ -1,5 +1,7 @@
 <% include ../partials/header %>
-<% include ../partials/alerts %>
+<% include ../partials/back %>
+
+
 <section class="userLoginForm">
   <div class="container mt-5">
     <div class="row">
@@ -8,27 +10,50 @@
           <div class="card-heder text-center">
             <h4>User Login</h4>
           </div>
-          <div class="card-block">
-            <form class="p-3" action="/auth/user-login" method="post">
-              <div class="form-group">
-                <label class="form-control-label">Username</label>
-                <input type="text" name="username" placeholder="username" class="form-control" required>
+        <div class="card-block">
+          <% include ../partials/alerts %>
+          <form class="p-3" action="/auth/user-login" method="post">
+            <div class="form-group">
+              <label class="form-control-label">Username</label>
+              <div class="input-group">
+                <input type="text" name="username" placeholder="Username" class="form-control">
+                <span class="input-group-btn">
+                  <span class="btn btn-primary"><i  class=" fa fa-user"></i></span>
+            </div>
+            <div class="form-group">
+              <label class="form-control-label">Password</label>
+              <div class="input-group">
+                <input id="password" type="password" name="password" placeholder="Password" class="form-control">
+                <span class="input-group-btn">
+                  <span class="btn btn-primary"><i id="pass-status"  class=" fa fa-lock" aria-hidden="true" onClick="viewPassword()"></i></span>
               </div>
-
-              <div class="form-group">
-                <label class="form-control-label">Password</label>
-                <input type="password" name="password" placeholder="password" class="form-control" required>
-              </div>
-              <button type="submit" class="btn btn-primary btn-block">Login</button>
-              <a href="/auth/reset"><span>forgot password?</span></a>
-            </form>
-
-          </div>
+              
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+            <a href="/auth/reset"><span>forgot password?</span></a>
+          </form>
         </div>
       </div>
     </div>
   </div>
 </section>
-
+<script>
+function viewPassword()
+{
+  var passwordInput = document.getElementById('password');
+  var passStatus = document.getElementById('pass-status');
+ 
+  if (passwordInput.type == 'password'){
+    passwordInput.type='text';
+    passStatus.class='fa fa-eye-slash';
+    
+  }
+  else{
+    passwordInput.type='password';
+    passStatus.class='fa fa-eye';
+  }
+}
+</script>
 
 <% include ../partials/footer %>
+

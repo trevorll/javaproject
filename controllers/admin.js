@@ -808,6 +808,9 @@ exports.putFineUser = async(req, res, next) => {
     
         });
         user.violationFlag = false;
+        const pos = user.bookIssueInfo.indexOf(book._id);
+
+        user.bookIssueInfo.splice(pos, 1);
         await paid.save();
         await user.save();
         await book.save();
@@ -850,6 +853,8 @@ exports.putFineUser = async(req, res, next) => {
           },
     
         });
+        const pos = user.bookIssueInfo.indexOf(book._id);
+        user.bookIssueInfo.splice(pos, 1);
         user.violationFlag = false;
         await paid.save();
         await user.save();
@@ -874,8 +879,6 @@ exports.postNewComment = async(req, res, next) => {
       const comment_text = req.body.comment;
       const user_id = req.user._id;
       const username = req.user.username;
-      console.log(username);
-
       const book_id = req.params.book_id;
       const book = await Book.findById(book_id);
 
@@ -967,6 +970,42 @@ exports.postNewComment = async(req, res, next) => {
           return res.redirect("back");
         }
       };
+// admin -> show all activities of one user
+exports.getUserAllActivities = async (req, res, next) => {
+  const count_requests = await Request.find().countDocuments();
+  try {
+    const user_id = req.params.user_id;
+    const activities = await Activity.find({"user_id.id": user_id})
+    const user = await User.findById(user_id)
+    .sort('-entryTime');
+      res.render("admin/activities", {
+        activities: activities,
+        count_requests:count_requests,
+        username: user.username
+      });
+  } catch(err) {
+      console.log(err);
+      res.redirect('back');
+  }
+};
+exports.postShowActivitiesByCategory = async (req, res, next) => {
+  const count_requests = await Request.find().countDocuments();
+  try {
+      const category = req.body.category;
+      const user_id = req.params.user_id;
+      const activities = await Activity.find({"category": category});
+      const user = await User.findById(user_id)
+
+      res.render("admin/activities", {
+          activities: activities,
+          count_requests:count_requests,
+          username: user.username
+      });
+  } catch(err) {
+      console.log(err);
+      res.redirect('back');
+  }
+};
 
 
 
