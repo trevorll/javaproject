@@ -1,4 +1,5 @@
 const fs = require("fs");
+const Mpesa = require('mpesa-node')
 
 
 const Book = require("../models/book");
@@ -7,9 +8,12 @@ const Request = require("../models/request");
 const Issue = require("../models/issue");
 const Activity = require("../models/activity");
 const Notification = require("../models/notifications");
+const Paidfines = require("../models/paidfines");
 
 
 const deleteImage = require("../utils/delete_image");
+const user = require("../models/user");
+const paidfines = require("../models/paidfines");
 
 const PER_PAGE = 10;
 
@@ -26,6 +30,9 @@ exports.getDashboard = async(req, res, next) => {
           .limit(PER_PAGE)
 
     const count_requests = await Request.find().countDocuments();
+    
+  
+
 
 
     res.render("admin/index", {
@@ -98,6 +105,28 @@ exports.getUsers = async(req, res, next) => {
   }
 }
 
+exports.getTotalFines = async(req, res, next) => {
+      const issues = await Paidfines.find();
+      let total_fines=0;
+      let balance = 0;
+      for(let issue of issues) { 
+        total_fines += issue.book_info.amount;
+        balance += issue.book_info.balance;
+            console.log(total_fines);
+            }
+            
+          
+
+        
+      
+        let remaining = total_fines+balance;
+        res.render("admin/fines", {
+          total_fines: total_fines,
+          balance: balance,
+          remaining:remaining,
+        })
+}
+
 exports.getUserProfile = async(req, res, next) => {
   try {
     var page = req.params.page || 1;
@@ -138,11 +167,42 @@ exports.postAddNewBook = async(req, res, next) => {
     }
     const new_book = new Book(book_info);
     await new_book.save();
-    req.flash("success", "You have added ${new_book.title} to the inventory");
+    req.flash("success", `You have added ${new_book.title} to the inventory`);
     res.redirect("/admin/bookInventory/all/all/1");
   } catch(err) {
     console.log(err)
     res.redirect('back');
+  }
+};
+exports.getUpdateBook = async (req, res, next) => {
+
+  try {
+      const count_requests = await Request.find().countDocuments();
+      const book_id = req.params.book_id;
+      const book = await Book.findById(book_id);
+
+      res.render('admin/book', {
+          book: book,
+          count_requests:count_requests,
+      })
+  } catch(err) {
+      console.log(err);
+      return res.redirect('back');
+  }
+};
+exports.postUpdateBook = async(req, res, next) => {
+
+  try {
+      const description = req.sanitize(req.body.book.description);
+      const book_info = req.body.book;
+      const book_id = req.params.book_id;
+
+      await Book.findByIdAndUpdate(book_id, book_info);
+
+      res.redirect("/admin/bookInventory/all/all/1");
+  } catch (err) {
+      console.log(err);
+      res.redirect('back');
   }
 };
 exports.getAdminRequests = async(req, res, next) => {
@@ -159,6 +219,7 @@ exports.getAdminRequests = async(req, res, next) => {
     pages: Math.ceil((requests / PER_PAGE)-PER_PAGE),
   });
 }
+
 
 exports.getuserinfo = async(req, res, next) =>{
   const user_id = req.params.user_id;
@@ -701,4 +762,213 @@ exports.deleteUser = async(req, res, next) => {
   console.log(err);
   res.redirect('back');
 }
-};
+}
+exports.putFineUser = async(req, res, next) => {
+  const amount =req.body.amount;
+  const currentUser = await User.findById(req.user._id);
+  const user = await User.findOne({"username": req.body.username});
+  const issues = await Issue.find({"user_id.id": user.id});
+  for(let issue of issues){
+  try {
+    
+    const book = await Book.findById(issue.book_info.id);
+    if(!user){
+      flash("error", "user doesnt exist");
+      res.redirect("back");
+    }else if(amount <= 0){
+      req.flash("error", "payment invalid");
+      res.redirect("back")
+    }else if(user.fines==0){
+      req.flash("error", "fine the user has no fines to pay!");
+      res.redirect("back");
+    }else if(user.fines == amount){
+      user.fines =0;
+      try {
+
+        book.stock += 1;
+        const paid = new paidfines({
+          book_info: {
+            id: book._id,
+            title: book.title,
+            author: book.author,
+            ISBN: book.ISBN,
+            issuedDate: issue.book_info.issueDate,
+            returnDate: issue.book_info.returnDate,
+            amount: amount,
+    
+          },
+          user_id: {
+            id: user._id,
+            username: user.username
+          },
+          fined_by: {
+            id: currentUser._id,
+            username: currentUser.username,
+          },
+    
+        });
+        user.violationFlag = false;
+        await paid.save();
+        await user.save();
+        await book.save();
+        await Issue.findByIdAndRemove(issue.id);
+        req.flash("success", "fine payed successfully");    
+        res.redirect('back');
+    
+    
+      } catch (err) {
+        console.log(err)
+      }    
+    }else if(user.fines > amount){
+      req.flash("warning", "please pay all the amount for you to be unflagged and allowed to return the book");
+      res.redirect("back");
+    }else if(user.fines < amount) {
+      const balance = user.fines-amount;
+      user.fines = 0;
+      try {
+
+        book.stock += 1;
+        const paid = new paidfines({
+          book_info: {
+            id: book._id,
+            title: book.title,
+            author: book.author,
+            ISBN: book.ISBN,
+            issuedDate: issue.book_info.issueDate,
+            returnDate: issue.book_info.returnDate,
+            amount: amount,
+            balance:balance,
+    
+          },
+          user_id: {
+            id: user._id,
+            username: user.username
+          },
+          fined_by: {
+            id: currentUser._id,
+            username: currentUser.username,
+          },
+    
+        });
+        user.violationFlag = false;
+        await paid.save();
+        await user.save();
+        await book.save();
+        await Issue.findByIdAndRemove(issue.id);
+        req.flash("success", "fine payed successfully! collect balance at the end of the semester");    
+        res.redirect('back');
+    
+    
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    }catch (err) {
+    console.log(err);
+  }
+}
+}
+exports.postNewComment = async(req, res, next) => {
+  try{
+      const comment_text = req.body.comment;
+      const user_id = req.user._id;
+      const username = req.user.username;
+      console.log(username);
+
+      const book_id = req.params.book_id;
+      const book = await Book.findById(book_id);
+
+      const comment = new Comment({
+        text: comment_text,
+        author: {
+          id: user_id,
+          username: username,
+        },
+        book: {
+          id: book._id,
+          title: book.title,
+        }
+      });
+      await comment.save();
+      book.comments.push(comment._id);
+      await book.save();
+
+      const activity = new Activity({
+        category:"Comment",
+        user_id: {
+          id: req.user.id,
+          username: req.body.username,
+        }
+
+      });
+      await activity.save();
+      res.redirect("/books/details/"+book_id);
+    }catch(err) {
+      console.log(err);
+      return res.redirect("back");
+    }
+  };
+  exports.postUpdateComment = async(req, res, next) => {
+    try{
+        const newComment_text = req.body.comment;
+        const user_id = req.user._id;
+        const username = req.user.username;
+  
+        const book_id = req.params.book_id;
+        const book = await Book.findById(book_id);
+        await Comment.findByIdAndUpdate(req.params.comment_id, newComment_text);
+  
+        const activity = new Activity({
+          category:"Update Comment",
+          user_id: {
+            id: req.user.id,
+            username: req.body.username,
+          }
+  
+        });
+        await activity.save();
+        res.redirect("/books/details/"+book_id);
+      }catch(err) {
+        console.log(err);
+        return res.redirect("back");
+      }
+    };
+    exports.deleteComment = async(req, res, next) => {
+      try{
+          const comment_id = req.body.comment_id;
+          const user_id = req.user._id;
+          const username = req.user.username;
+    
+          const book_id = req.params.book_id;
+          const book = await Book.findById(book_id);
+
+          const pos = book.comments.indexOf(comment_id);
+          book.comments.splice(pos, 1);
+          await book.save();
+
+        // removing comment from Comment
+          await Comment.findByIdAndRemove(comment_id);
+    
+          
+    
+          const activity = new Activity({
+            category:"Delete Comment",
+            user_id: {
+              id: req.user.id,
+              username: req.body.username,
+            }
+    
+          });
+          await activity.save();
+          res.redirect("/books/details/"+book_id);
+        }catch(err) {
+          console.log(err);
+          return res.redirect("back");
+        }
+      };
+
+
+
+ 
+

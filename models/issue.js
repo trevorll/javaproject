@@ -14,6 +14,7 @@ const issueSchema = new mongoose.Schema({
        issueDate : {type : Date, default : Date.now()},
        returnDate : {type : Date, default : Date.now() + 7*24*60*60*1000},
        isRenewed : {type : Boolean, default : false},
+
    },
 
    user_id : {

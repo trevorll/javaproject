@@ -4,6 +4,9 @@ const passport = require('passport');
 // importing models
 const User = require('../models/user');
 const Admin = require('../models/admin');
+const Activity = require("../models/activity");
+const Notification = require("../models/notifications");
+const user = require('../models/user');
 
 exports.getLandingPage = (req, res, next) => {
     res.render('landing');
@@ -21,6 +24,7 @@ exports.getAdminLogout = (req, res, next) => {
 exports.getAdminSignUp = (req, res, next) => {
     res.render("signup");
 }
+
 //
 exports.postAdminSignUp = async(req, res, next) => {
     try {
@@ -98,3 +102,71 @@ exports.postUserSignUp = async(req, res, next) => {
         return res.render("user/userSignup");
     }
 }
+exports.getReset = (req, res, next) =>{
+	res.render("reset");
+}
+
+    exports.postReset = async(req, res, next) => {
+        const user = await User.findOne({username: req.body.username});
+        if(!user){
+            req.flash("error", "user does not exist");
+            res.redirect("back")
+        }
+        return res.render("resetPassword", {
+            username:user.username,
+            email: user.email
+        });
+    }
+exports.getResetPassword = (re, res, next) =>{
+	res.render("resetPassword");
+}
+exports.postResetPassword = async(req, res, next) => {
+	const username = req.body.username;
+  	const vemail = req.body.email;
+  	const newPassword = req.body.password;
+  	const confirmPassword = req.body.confirmPassword;
+   	if(confirmPassword != newPassword){
+     		req.flash("error", "passwords dont match!");
+     		res.redirect("back");
+   	}else{
+           try{
+                const user = await User.findOne({username:username});
+                const email= user.email;
+                    if(vemail != email){
+                        req.flash("error", "provide the correct email!");
+                        res.redirect("back");
+                }
+                await user.setPassword(req.body.password);
+                await user.save()
+                console.log(user._id);
+
+
+                const activity = new Activity({
+                    category: "Reset Password",
+                    user_id : {
+                        id: user._id,
+                        username: user.username,
+                    }
+                });
+                await activity.save();
+
+                const notification = new Notification({
+                    category: "Reset Password",
+                    user_id: {
+                        id: user._id,
+                        username: user.username,
+                    }
+                })
+                await notification.save();
+                req.flash("success", "Your has been successfully reset. please log in again to confirm");
+                res.redirect("/auth/user-login");
+
+                }catch(err) {
+                        console.log(err);
+                        return res.redirect("back")
+                }
+	}
+}
+	
+
+

@@ -5,10 +5,10 @@ const middleware = {};
 middleware.isLoggedIn = function(req, res, next) {
   if(!req.isAuthenticated()) {
     req.flash("error", "Please provide the right credentials");
-    return res.redirect("back")
+    res.redirect("back");
   }else if(req.isAuthenticated() && req.user.isAdmin) {
-    req.flash("error","Sorry this page is  for admins only");
-    return res.redirect('back');
+    req.flash("error","please signup");
+    res.redirect('back');
   }else if(req.isAuthenticated()) {
       return next();
     }else{
@@ -19,7 +19,7 @@ middleware.isLoggedIn = function(req, res, next) {
 middleware.isAdmin = function(req, res, next) {
   if(!(req.isAuthenticated())) {
     req.flash("error", "Please provide the right credentials");
-    return res.redirect("back")
+    res.redirect("back");
   } else if(req.isAuthenticated() && !req.user.isAdmin){
     req.flash("error", "Sorry you are not an admin")
     res.redirect("back");

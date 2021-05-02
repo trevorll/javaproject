@@ -36,10 +36,17 @@
             </button>
           </p>
           <div class="collapse" id="collapseCommentBox">
-            <form action="/books/details/<%=book._id%>/comment" method="post">
-              <textarea name="comment" class="form-control"></textarea>
-              <input type="submit" class="btn btn-outline-success btn-sm m-1 float-right" value="Submit">
-            </form>
+            <% if (currentUser.isAdmin) {%>
+              <form action="/admin/details/<%=book._id%>/comment" method="post">
+                <textarea name="comment" class="form-control"></textarea>
+                <input type="submit" class="btn btn-outline-success btn-sm m-1 float-right" value="Submit">
+              </form>
+            <% } else { %>
+              <form action="/user/details/<%=book._id%>/comment" method="post">
+                <textarea name="comment" class="form-control"></textarea>
+                <input type="submit" class="btn btn-outline-success btn-sm m-1 float-right" value="Submit">
+              </form> 
+            <%}%>
           </div>
         <%}%>
         <ul class="list-group-items">
@@ -53,20 +60,37 @@
               <button id="edit" class="btn btn-primary px-1 py-0">
                         <i class="fa fa-pencil">edit</i>
                     </button>
-
-                    <form class="d-inline" action="/books/details/<%=book._id%>/<%=comment._id%>?_method=DELETE" method="POST">
+                    <% if (currentUser.isAdmin) {%>
+                      <form class="d-inline" action="/admin/details/<%=book._id%>/<%=comment._id%>?_method=DELETE" method="POST">
                         <button class="btn btn-sm btn-danger px-1 py-0">
-                            <i class="fa fa-trash">delete</i>
+                            <i class="fa fa-trash"></i>
                         </button>
                     </form>
+                    <% } else { %>
+                      <form class="d-inline" action="/user/details/<%=book._id%>/<%=comment._id%>?_method=DELETE" method="POST">
+                        <button class="btn btn-sm btn-danger px-1 py-0">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </form>
+                    <%}%>
+
 
             <%}%>
             <div class="d-none" id="editCommentBox">
-                    <form action="/books/details/<%=book._id%>/<%=comment._id%>" method="POST">
-                       <textarea name="comment[text]" class="form-control"><%=comment.text%></textarea>
-                       <input type="submit" class="btn btn-outline-success btn-sm m-1 float-right">
-                    </form>
-                   </div>
+              <% if (currentUser.isAdmin) {%>
+                <form action="/admin/details/<%=book._id%>/<%=comment._id%>" method="POST">
+                  <textarea name="comment[text]" class="form-control"><%=comment.text%></textarea>
+                  <input type="submit" class="btn btn-outline-success btn-sm m-1 float-right">
+               </form>
+              </div>
+              </form>
+              <% } else { %>
+                <form action="/user/details/<%=book._id%>/<%=comment._id%>" method="POST">
+                  <textarea name="comment[text]" class="form-control"><%=comment.text%></textarea>
+                  <input type="submit" class="btn btn-outline-success btn-sm m-1 float-right">
+               </form>
+              </div>
+              <%}%>
           </li>
         <%})%>
         </ul>

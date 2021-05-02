@@ -8,9 +8,9 @@
       <div class="col-md-6 offset-md-3">
         <div class="card-header text-center">
           <h4>Admin Login</h4>
-          <% include ../partials/alerts %>
         </div>
         <div class="card-block">
+          <% include ../partials/alerts %>
           <form class="p-3" action="/auth/admin-login" method="post">
             <div class="form-group">
               <label class="form-control-label">Username</label>
@@ -18,7 +18,9 @@
             </div>
             <div class="form-group">
               <label class="form-control-label">Password</label>
-              <input type="password" name="password" placeholder="Password" class="form-control">
+              <input  id="password" type="password" name="password" placeholder="Password" class="form-control">
+              <span class="p-viewer"><i id="pass-status"  class=" fa fa-eye" aria-hidden="true" onClick="viewPassword()"></i></span>
+              
             </div>
             <button type="submit" class="btn btn-primary btn-block">Submit</button>
           </form>
@@ -27,5 +29,22 @@
     </div>
   </div>
 </section>
+<script>
+function viewPassword()
+{
+  var passwordInput = document.getElementById('password');
+  var passStatus = document.getElementById('pass-status');
+ 
+  if (passwordInput.type == 'password'){
+    passwordInput.type='text';
+    passStatus.class='fa fa-eye-slash';
+    
+  }
+  else{
+    passwordInput.type='password';
+    passStatus.class='fa fa-eye';
+  }
+}
+</script>
 
 <% include ../partials/footer %>

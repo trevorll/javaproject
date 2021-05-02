@@ -1,4 +1,7 @@
 const express = require("express");
+      // mpesa = require("mpesa-node");
+      // mpesasdk = require("mpesa-node-sdk");
+      dotenv = require("dotenv");
       app = express();
       bodyParser = require("body-parser");
       mongoose = require("mongoose");
@@ -16,21 +19,25 @@ const express = require("express");
       Admin = require("./models/admin");
       Issue = require("./models/issue");
       Request = require("./models/request");
+      Paidfine = require("./models/paidfines");
       userRoutes = require("./routes/users");
       authRoutes = require("./routes/auth");
       bookRoutes = require("./routes/books");
       adminRoutes = require("./routes/admin");
+      otherRoutes = require("./routes/other");
       middleware = require("./middleware");
 
 
 //seed(1000);
 
 //app config
+dotenv.config();
 app.set("view engine", "ejs");
 app.use(methodOverride("_method"));
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(sanitizer());
+console.log(process.env.name);
 
 //db config
 const url = process.env.db_url || "mongodb://localhost/db1";
@@ -91,6 +98,7 @@ app.use(userRoutes);
 app.use(authRoutes);
 app.use(bookRoutes);
 app.use(adminRoutes);
+app.use(otherRoutes);
 
 function deleteImage(imagePath, next) {
   fs.unlink(imagePath, (err) => {

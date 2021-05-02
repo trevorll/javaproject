@@ -58,6 +58,16 @@ router.post("/admin/bookInventory/:filter/:value/:page", middleware.isAdmin, adm
 
 //get flag user
 router.get("/admin/users/flagged/:user_id", middleware.isAdmin, adminController.getFlagUser);
+//payment rout
+router.put("/admin/user/payment", middleware.isAdmin, adminController.putFineUser);
+router.get("/admin/fine/users", middleware.isAdmin, adminController.getTotalFines);
+
+//admin -> update book
+router.post("/admin/book/update/:book_id", middleware.isAdmin, adminController.postUpdateBook);
+router.get("/admin/book/update/:book_id", middleware.isAdmin, adminController.getUpdateBook);
+router.post("/admin/details/:book_id/comment", middleware.isAdmin, adminController.postNewComment);
+router.post("/admin/details/:book_id/:comment_id", middleware.isAdmin, adminController.postUpdateComment);
+router.delete("/admin/details/:book_id/:comment_id", middleware.isAdmin, adminController.deleteComment);
 
 
 

@@ -1,0 +1,37 @@
+<% include ../partials/header %>
+
+
+
+<section class="mt-4">
+  <div onLoad="JavaScript:timeRefresh(60000);" class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <div title="all collections including extra amounts" class="card text-center bg-primary text-white p-3 mb-3">
+          <div class="card-block">
+            <h3>Collections</h3>
+            <h1 class="display-4"><i class="fa fa-money-bill"></i> <%=total_fines%></h1>
+            <a href="" class="btn btn-outline-light">View</a>
+          </div>
+        </div>
+
+        <div title="amount to be deducted " class="card text-center bg-success text-white p-3 mb-3">
+          <div class="card-block">
+            <h3>payment</h3>
+            <h1 class="display-4"><i class="fa fa-money-check-alt"></i> <%=balance%> </h1>
+            <a href="" class="btn btn-outline-light">Balance</a>
+          </div>
+        </div>
+        <div title="actual revenue after deducting the " class="card text-center bg-success text-white p-3 mb-3">
+          <div class="card-block">
+            <h3>Users</h3>
+            <h1 class="display-4"><i class="fa fa-money-check"></i> <%=remaining%> </h1>
+            <a href="" class="btn btn-outline-light">Balance</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+  </div>
+</section>
+<% include ../partials/footer %>

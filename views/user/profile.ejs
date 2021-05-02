@@ -21,7 +21,7 @@
     <div class="row">
       <div class="col-md-3" mr-auto>
         <a href="/user/1" class="btn btn-light btn-block">
-        <i class="fa fa-arrow-left"></i> Back To Dashboard
+        <i class="fas fa-arrow-left "style="color:white"></i> Back To Dashboard
         </a>
       </div>
 
@@ -33,14 +33,14 @@
 
       <div class="col-md-3">
         <a href="" class="btn btn-warning btn-block" data-toggle="modal" data-target="#updateProfileModal">
-          <i class="fa fa-key"></i> Update Profile
+          <i class="fa fa-user"></i> Update Profile
         </a>
 
       </div>
       <% if (currentUser.bookIssueInfo.length > 0) {%>
       <div class="col-md-3">
         <a href="" class="btn btn-danger btn-block" disabled title="You have to return all borrowed/renewed books first">
-          <i class="fa fa-key"></i> Delete Profile
+          <i class="fa fa-trash"></i> Delete Profile
         </a>
       </div>
     <%}else{%>

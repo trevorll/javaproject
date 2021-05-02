@@ -9,12 +9,14 @@ const authController = require('../controllers/auth');
 // Import models
 const User = require("../models/user");
 const Admin = require("../models/admin");
+// const { route } = require("./users");
 
 //landing page
 router.get('/', authController.getLandingPage);
 
 //admin login handler
 router.get("/auth/admin-login", authController.getAdminLoginPage)
+
 
 router.post("/auth/admin-login", passport.authenticate("local", {
         successRedirect : "/admin",
@@ -47,5 +49,12 @@ router.get("/auth/user-logout", authController.getUserLogout);
 router.get("/auth/user-signUp", authController.getUserSignUp);
 
 router.post("/auth/user-signup", authController.postUserSignUp);
+
+//reset password handler
+router.get("/auth/resetPassword", authController.getResetPassword);
+router.post("/auth/resetPassword", authController.postResetPassword);
+router.post("/auth/reset", authController.postReset);
+router.get("/auth/reset", authController.getReset);
+router.post("/auth/reset", authController.postReset);
 
 module.exports = router;

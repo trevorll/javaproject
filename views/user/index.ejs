@@ -9,7 +9,7 @@
   <div class="container">
     <div class="row">
       <div class="col-md-6">
-        <h1><i class="fa fa-gear"></i> Dashboard</h1>
+        <h1><i class="fa fa-cog"></i> Dashboard</h1>
       </div>
     </div>
   </div>
@@ -121,7 +121,14 @@
                   <td><%=activity.category%></td>
                   <td><%=activity.entryTime.toDateString()%></td>
                   </tr>
+                <%}else if(activity.category == "Reset Password"){%>
+                  <tr>
+                  <td>You recently <span class="text-danger">reset your password <%=activity.info.title%></span></td>
+                  <td><%=activity.category%></td>
+                  <td><%=activity.entryTime.toDateString()%></td>
+                  </tr>
                 <%}%>
+
               <%});%>
             </tbody>
           </table>

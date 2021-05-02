@@ -14,6 +14,8 @@ const User = require("../models/user"),
 
 // importing utilities
 const deleteImage = require('../utils/delete_image');
+const { postIssueBook } = require('./admin');
+const user = require('../models/user');
 
 // GLOBAL_VARIABLES
 const PER_PAGE = 5;
@@ -31,13 +33,25 @@ exports.getUserDashboard = async(req, res, next) => {
             const issues = await Issue.find({"user_id.id" : user._id});
 
             for(let issue of issues) {
-                if(issue.book_info.returnDate < Date.now()) {
-                    const penalty = (((Date.now()-issue.book_info.returnDate)/1000000000)*5);
+                if(issue.book_info.returnDate < Date.now() && issue.book_info.isPaid==false) {
+                    const penalty = Math.floor((((Date.now()-issue.book_info.returnDate)/(1*24*60*60*1000))*5));
+                    if(user.fine < 0){
+                      user.fines+=penalty;
+                      await user.save();
+                      if(user.fines==0){
+                        user.violationFlag=false;
+                        await user.save();
+                      }else if(user.fines>0){
+                        user.violationFlag=true;
+                        await user.save();
+                      }
+                    }else{
                     user.fines = penalty;
                     user.violationFlag = true;
-                    user.save();
-                    req.flash("warning", "You are flagged for not returning " + issue.book_info.title + " in time");
+                    await user.save();
+                    req.flash("warning", "You are flagged for not returning " + issue.book_info.title + " on time");
                     break;
+                    }
                 }
             }
         };
@@ -214,6 +228,7 @@ exports.postNewComment = async(req, res, next) => {
       const comment_text = req.body.comment;
       const user_id = req.user._id;
       const username = req.user.username;
+      console.log(username);
 
       const book_id = req.params.book_id;
       const book = await Book.findById(book_id);
@@ -248,6 +263,64 @@ exports.postNewComment = async(req, res, next) => {
       return res.redirect("back");
     }
   };
+  exports.postUpdateComment = async(req, res, next) => {
+    try{
+        const newComment_text = req.body.comment;
+        const user_id = req.user._id;
+        const username = req.user.username;
+  
+        const book_id = req.params.book_id;
+        const book = await Book.findById(book_id);
+        await Comment.findByIdAndUpdate(req.params.comment_id, newComment_text);
+  
+        const activity = new Activity({
+          category:"Update Comment",
+          user_id: {
+            id: req.user.id,
+            username: req.body.username,
+          }
+  
+        });
+        await activity.save();
+        res.redirect("/books/details/"+book_id);
+      }catch(err) {
+        console.log(err);
+        return res.redirect("back");
+      }
+    };
+    exports.deleteComment = async(req, res, next) => {
+      try{
+          const comment_id = req.body.comment_id;
+          const user_id = req.user._id;
+          const username = req.user.username;
+    
+          const book_id = req.params.book_id;
+          const book = await Book.findById(book_id);
+
+          const pos = book.comments.indexOf(comment_id);
+          book.comments.splice(pos, 1);
+          await book.save();
+
+        // removing comment from Comment
+          await Comment.findByIdAndRemove(comment_id);
+    
+          
+    
+          const activity = new Activity({
+            category:"Delete Comment",
+            user_id: {
+              id: req.user.id,
+              username: req.body.username,
+            }
+    
+          });
+          await activity.save();
+          res.redirect("/books/details/"+book_id);
+        }catch(err) {
+          console.log(err);
+          return res.redirect("back");
+        }
+      };
 
   exports.getNotification = async(req, res, next) =>{
     const user_id = req.user._id;
@@ -295,6 +368,12 @@ exports.postNewComment = async(req, res, next) => {
       req.flash("warning", "you can't borrow more than 5 books at once");
       return res.redirect("back");
 
+    }
+    
+    else if(req.user.violationFlag){
+      req.flash("warning","you cant borrow a book you have been flagged!");
+      req.flash("error", "please contact the admin");
+      return res.redirect("back");
     }
 
     try{
@@ -434,7 +513,10 @@ exports.postNewComment = async(req, res, next) => {
     };
 
     const check = await Request.findOne(searchObj);
-    if(check){
+    if(req.user.violationFlag){
+      req.flash("warning", "you are flagged! Please visit the library to return the book");
+      res.redirect("back")
+    }else if(check){
       req.flash("error", "Return request already sent!");
       return res.redirect("back");
     };
@@ -511,8 +593,6 @@ exports.postNewComment = async(req, res, next) => {
     }
   };
   exports.getChart = async(req, res, next) => {
-    const theme = req.params.theme;
-    const type = req.params.type || "line";
     const heading = req.params.heading;
     var labels = [];
     var number = [];
@@ -552,11 +632,10 @@ exports.postNewComment = async(req, res, next) => {
       users:users,
       count_users:count_users,
       count_notification:count_notification,
-      type:type,
-      theme: theme,
       heading: heading,
       labels:labels,
       number:number,
 
     });
   }
+  
