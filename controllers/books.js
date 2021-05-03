@@ -43,7 +43,8 @@ exports.getBooks = async(req, res, next) => {
       count_notification:count_notification,
     })
   } catch(err) {
-    console.log(err)
+    console.log(err);
+      res.redirect("back");
   }
 },
 exports.findBooks = async(req, res, next) => {
@@ -78,7 +79,8 @@ exports.findBooks = async(req, res, next) => {
       count_notification:count_notification,
     })
   } catch(err) {
-    console.log(err)
+    console.log(err);
+      res.redirect("back");
   }
 };
  exports.getBookDetails = async(req, res, next) => {
@@ -90,5 +92,6 @@ exports.findBooks = async(req, res, next) => {
      res.render("user/BookDetails", {book: book, count_requests:count_requests, count_notification:count_notification,});
    }catch(err) {
      console.log(err);
+      res.redirect("back");;
    }
  };

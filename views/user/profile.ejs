@@ -1,5 +1,5 @@
-<% include ../partials/header %>
-<% include ../partials/userNav %>
+<%-include('../partials/header')%>
+<%-include('../partials/userNav')%>
 
 <!--NAVIGATION BAR FOR USER-->
 
@@ -54,7 +54,7 @@
   </div>
 
 </section>
-<% include ../partials/alerts %>
+<%- include('../partials/alerts') %>
 
 
 <!--profiles -->
@@ -165,7 +165,7 @@
             <label for="email" class="form-conrol-label">Edit Email</label>
             <input type="text" name="email" class="form-control" value="<%=currentUser.email%>">
           </div>
-          <button id="button" class="btn btn-warning btn-block">Submit</button>
+          <button id="submit" class="btn btn-warning btn-block">Submit</button>
         </form>
       </div>
     </div>
@@ -209,4 +209,4 @@
 });
 </script>
 
-<% include ../partials/footer %>
+<%- include('../partials/footer') %>

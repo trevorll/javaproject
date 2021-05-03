@@ -1,5 +1,4 @@
-<% include ../partials/header %>
-<% include ../partials/alerts %>
+<%-include('../partials/header')%>
 <section id="usersignUpForm">
   <div class="container mt-5">
     <div class="row">
@@ -9,6 +8,7 @@
             <h4>User Sign Up</h4>
           </div>
           <div class="card-block">
+            <%-include('../partials/alerts')%>
             <form class="p-3" action="/auth/user-signup" method="post">
               <div class="form-group">
                 <label class="form-control-label">First Name</label>
@@ -45,4 +45,4 @@
   </div>
 </section>
 
-<% include ../partials/footer %>
+<%-include('../partials/footer')%>

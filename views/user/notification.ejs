@@ -1,6 +1,5 @@
-<% include ../partials/header %>
-
-<% include ../partials/userNav %>
+<%-include('../partials/header')%>
+<%-include('../partials/userNav')%>
 
 
 <header id="main-header" class="py-2 bg-info text-white">
@@ -153,6 +152,14 @@
                           <i class="fa fa-trash"></i>
                       </button></form></td>
                   </tr>
+                <%}else if(notification.category == "Decline Delete Account Request"){%>
+                  <tr>
+                  <td>Your request <span class="text-warning"> Delete account on <%=notification.entryTime.toDateString()%></span> has been declined</td>
+                  <td><form class="d-inline" action="/user/1/notification/<%=notification._id%>?_method=DELETE" method="POST">
+                      <button class="btn btn-sm btn-danger px-1 py-0">
+                          <i class="fa fa-trash"></i>
+                      </button></form></td>
+                  </tr>
                 <%}%>
               <%});%>
             </tbody>
@@ -202,4 +209,4 @@
 </section>
 
 
-<% include ../partials/footer %>
+<%- include('../partials/footer') %>

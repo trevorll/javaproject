@@ -76,6 +76,7 @@ exports.postUserSignUp = async(req, res, next) => {
       fs.unlink(req.file.path, err => {
           if(err) {
               console.log(err);
+                res.redirect("back");;
           }
       })
   }
@@ -106,7 +107,7 @@ exports.getReset = (req, res, next) =>{
 	res.render("reset");
 }
 
-    exports.postReset = async(req, res, next) => {
+exports.postReset = async(req, res, next) => {
         const user = await User.findOne({username: req.body.username});
         if(!user){
             req.flash("error", "user does not exist");

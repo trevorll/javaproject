@@ -352,6 +352,7 @@ exports.postNewComment = async(req, res, next) => {
       });
     }catch(err){
       console.log(err);
+      res.redirect("back");;
     }
 
   };
@@ -367,6 +368,7 @@ exports.postNewComment = async(req, res, next) => {
       res.redirect('back')
     }catch(err) {
       console.log(err);
+      res.redirect("back");;
     }
 
   }
@@ -452,6 +454,7 @@ exports.postNewComment = async(req, res, next) => {
         })
     } catch (err) {
       console.log(err);
+      res.redirect("back");;
 
     }
 
@@ -513,6 +516,7 @@ exports.postNewComment = async(req, res, next) => {
         res.redirect('back');
     }catch(err) {
       console.log(err);
+      res.redirect("back");;
     }
 
   };
@@ -569,6 +573,7 @@ exports.postNewComment = async(req, res, next) => {
       res.redirect('back')
     } catch (err) {
       console.log(err);
+      res.redirect("back");;
     }
   }
   };
@@ -603,6 +608,7 @@ exports.postNewComment = async(req, res, next) => {
       res.redirect('back')
     } catch (err) {
       console.log(err);
+      res.redirect("back");;
     }
   };
   //Draw a graph for your activities per day

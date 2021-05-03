@@ -1,8 +1,8 @@
-<% include ../partials/header %>
+<%- include('../partials/header') %>
 
 
 <!--NAVIGATION BAR FOR ADMIN-->
-<% include ../partials/adminNav %>
+<%- include('../partials/adminNav') %>
 
 <header id="main-header" class="py-2 bg-primary text-white">
   <div class="container">
@@ -41,14 +41,15 @@
   </div>
 </section>
 
-<% include ../partials/alerts %>
+<%- include('../partials/alerts') %>
 
 <!-- BOOK INVENTORY -->
-<section id="bookInventory" class="mt-5">
+<section  class="mt-5" >
   <div onLoad="JavaScript:timeRefresh(60000);"  class="container">
     <div class="row">
       <div class="col">
         <div class="card">
+          <div id="dvContainer">
           <table class="table table-striped">
             <thead class="thead-inverse">
               <tr>
@@ -81,6 +82,7 @@
 
             </tbody>
           </table>
+          </div>
 
           <% if (pages > 0) { %>
             <nav class="ml-3 mb-2">
@@ -120,4 +122,4 @@
   </div>
 </section>
 
-<% include ../partials/footer %>
+<%- include('../partials/footer') %>

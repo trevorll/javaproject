@@ -1,10 +1,11 @@
-<% include ../partials/header %>
+<%- include('../partials/header') %>
+
 
 <!--NAVIGATION BAR FOR ADMIN-->
-<% include ../partials/adminNav %>
+<%- include('../partials/adminNav') %>
     
 <!--SHOW BOOK EDIT FORM-->
-<div class="container my-4">
+<div class="container my-4" id="dvContainer">
   <div class="row justify-content-center">
     <div class="col-md-8">
        <form action="/admin/book/update/<%=book._id%>" method="POST">
@@ -49,4 +50,4 @@
 <script>
   CKEDITOR.replace('book[description]');
 </script>
-<% include ../partials/footer %>
+<%- include('../partials/footer') %>

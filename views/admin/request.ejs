@@ -1,9 +1,11 @@
 <div onLoad="JavaScript:timeRefresh(60000);">
 
 
-<% include ../partials/header %>
+  <%- include('../partials/header') %>
 
-<% include ../partials/adminNav %>
+
+  <!--NAVIGATION BAR FOR ADMIN-->
+  <%- include('../partials/adminNav') %>
 
 
 <header id="main-header" class="py-2 bg-info text-white">
@@ -27,7 +29,7 @@
             <h4>Notifications</h4>
           </div>
 
-<% include ../partials/alerts %>
+<%- include('../partials/alerts') %>
           <table class="table table-striped">
             <thead class="thead-inverse">
               <tr>
@@ -89,7 +91,7 @@
                           <i class="fa fa-trash"></i></button></form>
                   </td>
                   <td>
-                    <form class="d-inline" action="/admin/decline/request/<%=request._id%>/book/<%=request.book_info.id%>/user/<%=request.user_id.id%>?_method=DELETE" method="POST">
+                    <form class="d-inline" action="/admin/delete/request/<%=request._id %>/user/<%=request.user_id.id %>?_method=DELETE" method="POST">
                       <button class="btn btn-sm btn-danger px-1 py-0">Decline
                           <i class="fa fa-trash"></i> </button></form>
 
@@ -142,5 +144,5 @@
 </section>
 
 
-<% include ../partials/footer %>
+<%- include('../partials/footer') %>
 </div>

@@ -1,8 +1,12 @@
-<% include ../partials/header %>
+<%- include('../partials/header') %>
+
+
+<!--NAVIGATION BAR FOR ADMIN-->
+<%- include('../partials/adminNav') %>
 
 
 
-<section class="mt-4">
+<section class="mt-4" id="dvContainer">
   <div onLoad="JavaScript:timeRefresh(60000);" class="container">
     <div class="row">
       <div class="col-md-9">
@@ -34,4 +38,7 @@
     </div>
   </div>
 </section>
-<% include ../partials/footer %>
+
+</head>
+
+<%- include('../partials/footer') %>

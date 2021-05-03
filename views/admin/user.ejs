@@ -1,8 +1,10 @@
-<% include ../partials/header %>
+<%- include('../partials/header') %>
 
-<% include ../partials/adminNav %>
 
-<div onLoad="JavaScript:timeRefresh(60000);" class="container mt-5 pt-2">
+<!--NAVIGATION BAR FOR ADMIN-->
+<%- include('../partials/adminNav') %>
+
+<div onLoad="JavaScript:timeRefresh(60000);" class="container mt-5 pt-2" id="dvContainer">
     <div class="row">
         <div class="col-md-3">
             <img src="/images/<%=user.image || "profile.png" %>" class="card-img-top">
@@ -80,7 +82,7 @@
                  <% } %>
 
                  <%if(activities.length > 6) { %>
-                 <a href="/admin/users/activities/<%=user._id%>" class="btn btn-primary btn-block">See all...</a>
+                 <a href="/admin/users/activities/<%=user._id%>/1" class="btn btn-primary btn-block">See all...</a>
                 <% } %>
               </ul>
             </div>
@@ -88,4 +90,4 @@
     </div>
 </div>
 
-<% include ../partials/footer %>
+<%- include('../partials/footer') %>

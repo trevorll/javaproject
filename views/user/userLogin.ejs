@@ -1,5 +1,5 @@
-<% include ../partials/header %>
-<% include ../partials/back %>
+<%-include('../partials/header')%>
+<%-include('../partials/back')%>
 
 
 <section class="userLoginForm">
@@ -11,7 +11,7 @@
             <h4>User Login</h4>
           </div>
         <div class="card-block">
-          <% include ../partials/alerts %>
+          <%-include('../partials/alerts')%>
           <form class="p-3" action="/auth/user-login" method="post">
             <div class="form-group">
               <label class="form-control-label">Username</label>
@@ -55,5 +55,5 @@ function viewPassword()
 }
 </script>
 
-<% include ../partials/footer %>
+<%-include('../partials/footer')%>
 

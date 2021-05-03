@@ -1,0 +1,198 @@
+<%- include('../partials/header') %>
+
+
+<!--NAVIGATION BAR FOR ADMIN-->
+<%- include('../partials/adminNav') %>
+
+<header id="main-header" class="py-2 bg-primary text-white">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <h1><i class="fa fa-pencil-alt"></i> <%= user.username %>'s Activities</h1>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ACTIONS -->
+<section id="actions" class="py-4 mb-4">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3 mr-auto">
+          <a href="/admin" class="btn btn-light btn-block">
+          <i class="fa fa-arrow-left" style="color: white;"></i> Back To Dashboard
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+
+<!-- Activities -->
+<section  >
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div id="dvContainer">
+          <div class="card-header text-center">
+            <h4>Recent Activities</h4>
+          </div>
+          <table class="table table-striped">
+            <thead class="thead-inverse">
+              <tr>
+                <th>Info</th>
+                <th>Category</th>
+                <th>Date Posted</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%for(let i = 0; i < activities.length; i++) { %>
+    
+                <tr>
+                <% if(activities[i].category =="Issue") { %>
+                      <td>
+                         <%=activities[i].user_id.username || 'This user'%> issued <%=activities[i].info.title%> 
+                      </td>
+                      <td>Issue</td>
+                      <td><%=activities[i].entryTime.toDateString()%></td>
+                  <% } else if(activities[i].category =="Return") { %>
+                      <td>
+                         <%=activities[i].user_id.username || 'This user'%> returned <%=activities[i].info.title%> 
+                      </td>
+                      <td>Return</td>
+                      <td><%=activities[i].entryTime.toDateString()%></td>
+                  <% }  else if(activities[i].category =="Renew") { %>
+                      <td>
+                         <%=activities[i].user_id.username || 'This user'%> renewed <%=activities[i].info.title%> 
+                      </td>
+                      <td>Renew</td>
+                      <td><%=activities[i].entryTime.toDateString()%></td>
+                      
+                  <% }  else if(activities[i].category =="Update Profile") { %>
+                      <td>
+                         <%=activities[i].user_id.username || 'This user'%> updated profile
+                      </td>
+                      <td>Update Profile</td>
+                      <td><%=activities[i].entryTime.toDateString()%></td>
+                      
+                  <% }  else if(activities[i].category =="Update Password") { %>
+                      <td>
+                         <%=activities[i].user_id.username || 'This user'%> updated password
+                      </td>
+                      <td>Update Password</td>
+                      <td><%=activities[i].entryTime.toDateString()%></td>
+                      
+                  <% }  else if(activities[i].category =="Upload Photo") { %>
+                       <td>
+                         <%=activities[i].user_id.username || 'This user'%> update/upload profile
+                      </td>
+                      <td>Update/Upload Profile</td>
+                      <td><%=activities[i].entryTime.toDateString()%></td>
+                      
+                  <% }  else if(activities[i].category =="Comment") { %>
+                      <td>
+                         <%=activities[i].user_id.username || 'This user'%> commented on a book<%=activities[i].info.title%>
+                      </td>
+                      <td>Comment</td>
+                      <td><%=activities[i].entryTime.toDateString()%></td>
+                  <% } else if(activities[i].category =="Update Comment") { %>
+                      <td>
+                         <%=activities[i].user_id.username || 'This user'%> updated comment on <%=activities[i].info.title%>
+                      </td>
+                      <td>Update Comment</td>
+                      <td><%=activities[i].entryTime.toDateString()%></td>
+                  <% } else if(activities[i].category =="Delete Comment") { %>
+                      <td>
+                         <%=activities[i].user_id.username || 'This user'%> deleted comment on a book<%=activities[i].info.title%>
+                      </td>
+                      <td>Reset Password</td>
+                      <td><%=activities[i].entryTime.toDateString()%></td>
+                  <% } else if(activities[i].category =="Reset Password") { %>
+                    <td>
+                       <%=activities[i].user_id.username || 'This user'%> Reset Password on <%=activities[i].info.title%>
+                    </td>
+                    <td>Grant Renew</td>
+                    <td><%=activities[i].entryTime.toDateString()%></td>
+                <% } else if(activities[i].category =="Grant Renew") { %>
+                    <td>
+                       <%=activities[i].user_id.username || 'This user'%> was granted renew <%=activities[i].info.title%>
+                    </td>
+                    <td>Grant Return</td>
+                    <td><%=activities[i].entryTime.toDateString()%></td>
+                <% } else if(activities[i].category =="Grant Return") { %>
+                    <td>
+                       <%=activities[i].user_id.username || 'This user'%> was granted return <%=activities[i].info.title%>
+                    </td>
+                    <td>Grant Renew Request</td>
+                    <td><%=activities[i].entryTime.toDateString()%></td>
+                <% } if(activities[i].category =="Grant Renew Request") { %>
+                    <td>
+                       <%=activities[i].user_id.username || 'This user'%> Send Renew Request <%=activities[i].info.title%>
+                    </td>
+                    <td>Uploade New Profile Photo</td>
+                    <td><%=activities[i].entryTime.toDateString()%></td>
+                <% } if(activities[i].category =="Uploaded New Profile Photo") { %>
+                    <td>
+                       <%=activities[i].user_id.username || 'This user'%> updated profile photo <%=activities[i].info.title%>
+                    </td>
+                    <td>Update Profile Info</td>
+                    <td><%=activities[i].entryTime.toDateString()%></td>
+                <% } if(activities[i].category =="Update Profile Info") { %>
+                    <td>
+                       <%=activities[i].user_id.username || 'This user'%> updated profile information<%=activities[i].info.title%>
+                    </td>
+                    <td>Delete Comment</td>
+                    <td><%=activities[i].entryTime.toDateString()%></td>
+                <% } %>
+              </tr>
+                
+              <%  } %>
+            </tbody>
+          </table>
+          </div>
+          <% if (pages > 0) { %>
+            <nav class="ml-3 mb-2">
+              <ul class="pagination offset-md-3">
+        
+                <% if (current == 1) { %>
+                  <li class="page-item disabled"><a class="page-link">First</a></li>
+                <% } else { %>
+                  <li class="page-item"><a href="/admin/users/activity/<%=user._id%>/<%=category%>/1" class="page-link">First</a></li>
+                <% } %>
+        
+                <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
+                        <% if (i !== 1) { %>
+                            <li class="page-item disabled"><a class="page-link">...</a></li>
+                        <% } %>
+                        <% for (; i <= (Number(current) + 4) && i <= pages; i++) { %>
+                            <% if (i == current) { %>
+                                <li class="page-item active"><a class="page-link"><%= i %></a></li>
+                            <% } else { %>
+                                <li class="page-item"><a class="page-link" href="/admin/users/activity/<%=user._id%>/<%=category%>/<%= i %>"><%= i %></a></li>
+                            <% } %>
+                            <% if (i == Number(current) + 4 && i < pages) { %>
+                                <li class="page-item disabled"><a class="page-link">...</a></li>
+                            <% } %>
+                        <% } %>
+                        <% if (current == pages) { %>
+                            <li class="page-item disabled"><a class="page-link">Last</a></li>
+                        <% } else { %>
+                            <li class="page-item"><a href="/admin/users/activity/<%=user._id%>/<%=category%>/<%= pages %>" class="page-link">Last</a></li>
+                        <% } %>
+              </ul>
+            </nav>
+         <% } %>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+<%- include('../partials/footer') %>

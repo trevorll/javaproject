@@ -1,6 +1,6 @@
-<% include ../partials/header %>
+<%- include('../partials/header') %>
 <% if(currentUser.isAdmin){ %>
-  <% include ../partials/adminNav %>
+  <%- include('../partials/adminNav') %>
 	<section  class="my-3 py-4 bg-light">
 	  <div class="container">
 	    <div class="row">
@@ -29,7 +29,7 @@
 	</section>
 
 <%}else { %>
-  <% include ../partials/userNav %>
+  <%- include('../partials/userNav') %>
 	<section  class="my-3 py-4 bg-light">
 	  <div class="container">
 	    <div class="row">
@@ -131,5 +131,5 @@
 </div>
 </div>
 </div>
-<div class="col-lg-20" id="chartContainer" style="height: 500px; width: 100%;"></div>
-<% include ../partials/footer %>
+<div id="dvContainer"><div class="col-lg-20" id="chartContainer" style="height: 500px; width: 100%;"></div>
+<%- include('../partials/footer') %>

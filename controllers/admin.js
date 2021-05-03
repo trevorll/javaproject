@@ -1,5 +1,4 @@
 const fs = require("fs");
-const Mpesa = require('mpesa-node')
 
 
 const Book = require("../models/book");
@@ -14,6 +13,7 @@ const Paidfines = require("../models/paidfines");
 const deleteImage = require("../utils/delete_image");
 const user = require("../models/user");
 const paidfines = require("../models/paidfines");
+const { date } = require("faker");
 
 const PER_PAGE = 10;
 
@@ -30,6 +30,17 @@ exports.getDashboard = async(req, res, next) => {
           .limit(PER_PAGE)
 
     const count_requests = await Request.find().countDocuments();
+    const issues = await Issue.find();
+    for(let issue of issues){
+      if(issue.book_info.returnDate < Date.now()){
+        const user = await User.findById(issue.user_id.id);
+        const penalty = Math.floor((Date.now()-issue.book_info.returnDate)/(1*24*60*60*1000)*5)
+        user.fines = penalty;
+        user.violationFlag = true;
+        await user.save();
+
+      }
+    }
     
   
 
@@ -44,7 +55,8 @@ exports.getDashboard = async(req, res, next) => {
       pages: Math.ceil(users_count / PER_PAGE)
     });
   } catch(err) {
-    console.log(err)
+    console.log(err);
+      res.redirect("back");
   }
 };
 
@@ -62,6 +74,10 @@ exports.postDashboard = async(req, res, next) => {
                 {"category" : search_value}
               ]
           });
+    if(!activities){
+      req.flash("error", "No activity found");
+      res.redirect("back");
+    }else{
 
 
     const count_requests = await Request.find().countDocuments();
@@ -75,8 +91,10 @@ exports.postDashboard = async(req, res, next) => {
       current: page,
       pages: 0
     });
+  }
   } catch(err) {
-    console.log(err)
+    console.log(err);
+      res.redirect("back");
   }
 };
 
@@ -102,10 +120,12 @@ exports.getUsers = async(req, res, next) => {
           })
   }catch(err){
     console.log(err);
+      res.redirect("back");;
   }
 }
 
 exports.getTotalFines = async(req, res, next) => {
+      const count_requests = await Request.find().countDocuments();
       const issues = await Paidfines.find();
       let total_fines=0;
       let balance = 0;
@@ -123,6 +143,7 @@ exports.getTotalFines = async(req, res, next) => {
         res.render("admin/fines", {
           total_fines: total_fines,
           balance: balance,
+          count_requests: count_requests,
           remaining:remaining,
         })
 }
@@ -150,6 +171,7 @@ exports.getUserProfile = async(req, res, next) => {
           })
   }catch(err){
     console.log(err);
+      res.redirect("back");;
   }
 }
 
@@ -309,7 +331,8 @@ exports.postIssueBook = async(req, res, next) => {
 
 
   } catch (err) {
-    console.log(err)
+    console.log(err);
+      res.redirect("back");
   }
 };
 
@@ -332,6 +355,7 @@ exports.getAdminBookInventory = async(req, res, next) => {
 
   } catch (err) {
     console.log(err);
+      res.redirect("back");;
   }
 };
 exports.postAdminBookInventory = async(req, res, next) => {
@@ -612,6 +636,7 @@ exports.deleteDeclineRequest = async(req, res, next) => {
 
     }catch(err){
       console.log(err);
+      res.redirect("back");;
     }
   };
   exports.deleteUserAccount = async(req, res, next) => {
@@ -625,6 +650,7 @@ exports.deleteDeclineRequest = async(req, res, next) => {
     if(fs.existsSync(imagePath)) {
         deleteImage(imagePath);
     }
+    
 
     await Issue.deleteMany({"user_id.id": user_id});
     await Comment.deleteMany({"author.id":user_id});
@@ -640,6 +666,29 @@ exports.deleteDeclineRequest = async(req, res, next) => {
     res.redirect('back');
 }
 };
+
+exports.postDeleteRequest = async(req, res, next) => {
+    const request_id = req.params.requestid;
+    try {
+    const request = await Request.findById(request_id);
+    const user = await User.findById(req.params.userid);
+    await request.remove();
+    const notifcation = new Notification({
+      category: "Decline Delete Account Request",
+      user_id: {
+        id: user.id,
+        username: user.username,
+      }
+    })
+    await notifcation.save();
+    res.redirect("back");
+
+    } catch(err) {
+      console.log(err);
+      res.redirect("back");
+
+    }
+  }
 exports.getChart = async(req, res, next) => {
   const theme = req.params.theme;
   const type = req.params.type || "line";
@@ -820,7 +869,8 @@ exports.putFineUser = async(req, res, next) => {
     
     
       } catch (err) {
-        console.log(err)
+        console.log(err);
+      res.redirect("back");
       }    
     }else if(user.fines > amount){
       req.flash("warning", "please pay all the amount for you to be unflagged and allowed to return the book");
@@ -865,12 +915,14 @@ exports.putFineUser = async(req, res, next) => {
     
     
       } catch (err) {
-        console.log(err)
+        console.log(err);
+      res.redirect("back");
       }
     }
 
     }catch (err) {
     console.log(err);
+      res.redirect("back");;
   }
 }
 }
@@ -972,16 +1024,21 @@ exports.postNewComment = async(req, res, next) => {
       };
 // admin -> show all activities of one user
 exports.getUserAllActivities = async (req, res, next) => {
+  const page = req.params.page;
   const count_requests = await Request.find().countDocuments();
   try {
     const user_id = req.params.user_id;
-    const activities = await Activity.find({"user_id.id": user_id})
-    const user = await User.findById(user_id)
-    .sort('-entryTime');
+    const activities = await Activity.find({"user_id.id": user_id}).find().sort("-entryTime").skip((PER_PAGE * page) - PER_PAGE).limit(PER_PAGE)  
+    const user = await User.findById(user_id);
+    const count = await Activity.find({"user_id.id": user_id}).countDocuments();
+    console.log(count);
       res.render("admin/activities", {
         activities: activities,
         count_requests:count_requests,
-        username: user.username
+        username: user.username,
+        current: page,
+        user:user,
+        pages: Math.ceil(count / PER_PAGE),
       });
   } catch(err) {
       console.log(err);
@@ -989,23 +1046,36 @@ exports.getUserAllActivities = async (req, res, next) => {
   }
 };
 exports.postShowActivitiesByCategory = async (req, res, next) => {
+  const page = req.params.page || 1;
   const count_requests = await Request.find().countDocuments();
   try {
-      const category = req.body.category;
+      const category = req.body.category || req.params.category;
       const user_id = req.params.user_id;
-      const activities = await Activity.find({"category": category});
+      const activities = await Activity.find({"category": category,"user_id.id": user_id}).find().sort("-entryTime").skip((PER_PAGE * page) - PER_PAGE).limit(PER_PAGE);
+      if(!activities){
+        req.flash("error", "No activity found");
+        res.redirect("back");
+      }else{
+  
+      const count = await Activity.find({"category": category}).countDocuments();
       const user = await User.findById(user_id)
 
-      res.render("admin/activities", {
+      res.render("admin/category", {
           activities: activities,
           count_requests:count_requests,
-          username: user.username
+          user: user,
+          category:category,
+          current: page,
+
+          pages: Math.ceil(count / PER_PAGE),
       });
+    }
   } catch(err) {
       console.log(err);
       res.redirect('back');
   }
 };
+
 
 
 

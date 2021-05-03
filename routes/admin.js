@@ -12,6 +12,8 @@ const express = require("express"),
 
 
 const adminController = require('../controllers/admin');
+const { route } = require("./users");
+const userController = require("../controllers/user");
 
 
 //gets admin dashboard
@@ -37,6 +39,8 @@ router.post("/admin/grant/borrow/:request_id", middleware.isAdmin, adminControll
 router.get("/admin/renew/request/:request_id/book/:book_id/user/:user_id", middleware.isAdmin, adminController.getRenewBook);
 //admin decline request
 router.delete("/admin/decline/request/:request_id/book/:book_id/user/:user_id", middleware.isAdmin, adminController.deleteDeclineRequest);
+//delete userrequest to delete the account
+router.delete("/admin/delete/request/:requestid/user/:userid", middleware.isAdmin, adminController.postDeleteRequest);
 //Grant user return book
 router.post("/admin/return/request/:request_id/book/:book_id/user/:user_id", middleware.isAdmin, adminController.postReturnBook);
 //grant delete user Profile
@@ -69,8 +73,11 @@ router.post("/admin/details/:book_id/comment", middleware.isAdmin, adminControll
 router.post("/admin/details/:book_id/:comment_id", middleware.isAdmin, adminController.postUpdateComment);
 router.delete("/admin/details/:book_id/:comment_id", middleware.isAdmin, adminController.deleteComment);
 //show more
-router.get("/admin/users/activities/:user_id", middleware.isAdmin, adminController.getUserAllActivities);
-router.post("/admin/users/activities/:user_id", middleware.isAdmin, adminController.postShowActivitiesByCategory);
+router.get("/admin/users/activities/:user_id/:page", middleware.isAdmin, adminController.getUserAllActivities);
+router.post("/admin/users/activities/:user_id/:page", middleware.isAdmin, adminController.postShowActivitiesByCategory);
+router.get("/admin/users/activity/:user_id/:category/:page", middleware.isAdmin, adminController.postShowActivitiesByCategory);
+router.post("/admin/users/activity/:user_id/:category/:page", middleware.isAdmin, adminController.postShowActivitiesByCategory);
+router.get("/admin/print/reports", middleware.isAdmin, adminController.getPrintReport);
 
 
 
