@@ -77,7 +77,6 @@ router.get("/admin/users/activities/:user_id/:page", middleware.isAdmin, adminCo
 router.post("/admin/users/activities/:user_id/:page", middleware.isAdmin, adminController.postShowActivitiesByCategory);
 router.get("/admin/users/activity/:user_id/:category/:page", middleware.isAdmin, adminController.postShowActivitiesByCategory);
 router.post("/admin/users/activity/:user_id/:category/:page", middleware.isAdmin, adminController.postShowActivitiesByCategory);
-router.get("/admin/print/reports", middleware.isAdmin, adminController.getPrintReport);
 
 
 
