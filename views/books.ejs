@@ -81,10 +81,10 @@
         ">
           <select name="filter" class="form-control" required>
             <option selected name="select filter...">Select Filter...</option>
-            <option  name="title">Title</option>
-            <option  name="author">Author</option>
-            <option  name="category">Category</option>
-            <option  name="ISBN">ISBN</option>
+            <option value="title" name="title">Title</option>
+            <option value="author" name="author">Author</option>
+            <option value="category" name="category">Category</option>
+            <option value="ISBN" name="ISBN">ISBN</option>
           </select>
         </div>
 
@@ -142,16 +142,43 @@
         </div>
     <% } %>
     </div>
-    <% if (pages > 0) { %>
-      <nav class="ml-3 mb-2">
-        <ul class="pagination offset-md-3">
-
-
-        </ul>
-      </nav>
-   <% } %>
-  </div>
+</div>
 </section>
+<div class="col-md-12 card">
+    <% if (pages > 0) { %>
+      <nav class="mx-auto mb-2 text-center">
+        <ul class="pagination ">
+  
+      <% if (pages == 1) { %>
+          <li class="page-item disabled"><a class="page-link">First</a></li>
+      <% } else { %>
+          <li class="page-item"><a href="/books/all/all/1" class="page-link">First</a></li>
+      <% } %>
+  
+      <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
+          <% if (i !== 1) { %>
+            <li class="page-item disabled"><a class="page-link">...</a></li>
+          <% } %>
+          <% for (; i <= (Number(current) + 4) && i <= pages; i++) { %>
+              <% if (i == current) { %>
+                <li class="page-item active"><a class="page-link"><%= i %></a></li>
+              <% } else { %>
+                <li class="page-item"><a class="page-link" href="/books/all/all/<%= i %>"> <%= i %></a> </li>
+              <% } %>
+              <% if (i == Number(current) + 4 && i < pages) { %>
+                    <li class="page-item disabled"><a class="page-link">...</a></li>
+                <% } %>
+              <% } %>
+              <% if (current == pages) { %>
+                  <li class="page-item disabled"><a class="page-link">Last</a></li>
+              <% } else { %>
+                  <li class="page-item"><a href="/books/all/all/<%= pages %>" class="page-link">Last</a></li>
+          <% } %>
+      </ul>
+    </nav>
+    <% } %>
+  </div>
+  
 
 
 <%- include('partials/footer') %>

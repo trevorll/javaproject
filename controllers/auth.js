@@ -89,7 +89,7 @@ exports.postUserSignUp = async(req, res, next) => {
             lastName : req.body.lastName,
             username : req.body.username,
             email : req.body.email,
-            // gender : req.body.gender,
+            gender : req.body.gender,
             // address : req.body.address,
             image : "",
          });

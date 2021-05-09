@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-0 sticky-top">
     <div class="container">
-      <a class="navbar-brand" href="/admin">Home</a>
+      <a class="navbar-brand" href="/admin"><i class="fa fa-home"></i>Home</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -8,39 +8,51 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav">
 
-           <li class="nav-item px-1">
-            <a class="nav-link" href="/admin/bookInventory/all/all/1">Book Inventory</a>
+           <li class="nav-item">
+            <a title="view the book store" class="nav-link" href="/admin/bookInventory/all/all/1">
+              <i class="fa fa-book"></i>Inventory</a>
           </li>
 
-           <li class="nav-item px-1">
-            <a class="nav-link" href="/admin/users/1">Users</a>
+           <li class="nav-item">
+            <a title="view users" class="nav-link" href="/admin/users/1">
+              <i class="fa fa-users"></i> Users
+            </a>
           </li>
 
-           <li class="nav-item px-1">
-            <a class="nav-link" href="/admin/books/add">
-              <i class="fa fa-add"></i> Add Books</a>
+           <li class="nav-item">
+            <a title="add books" class="nav-link" href="/admin/books/add">
+              <i class="fa fa-plus-square"></i>Books</a>
+          </li>
+          <li class="nav-item">
+            <a title="add ebooks" class="nav-link" href="/admin/upload/epdf">
+              <i class="fa fa-plus-square"></i> eBooks</a>
           </li>
 
-          <li class="nav-item px-1">
-            <a class="nav-link" href="/books/all/all/1">Browse Books</a>
+          <li class="nav-item">
+            <a title="search books" class="nav-link" href="/books/all/all/1">
+              <i class="fa fa-search"></i> Books</a>
           </li>
-          <li class="nav-item px-1">
-          <a href="/admin/users/chart/<%="dark2"%>/<%="Number of users tha join per day"%>" class="nav-link">
+          <li class="nav-item">
+            <a title="search books" class="nav-link" href="/ebooks/all/all/1">
+              <i class="fa fa-search"></i> eBooks</a>
+          </li>
+          <li class="nav-item">
+          <a title="view charts" href="/admin/users/chart/<%="dark2"%>/<%="Number of users tha join per day"%>" class="nav-link">
             <i class="fa fa-chart-area"></i>chart
           </a>
           </li>
-          <li class="nav-item px-1">
-              <a title="pay user fines" href="" class="nav-link" data-toggle="modal" data-target="#paymentModal">
+          <li class="nav-item">
+              <a title="pay user's fines" href="" class="nav-link" data-toggle="modal" data-target="#paymentModal">
                 <i class="fa fa-money-bill-wave"></i>fine
               </a>
           </li>
-          <li class="nav-item px-1">
-            <a title="see total fines" href="/admin/fine/users" class="nav-link">
-              <i class="fa fa-money-bill"></i>total fines
+          <li class="nav-item">
+            <a title="view total fines" href="/admin/fine/users" class="nav-link">
+              <i class="fa fa-coins"></i>collections
             </a>
             </li>
-            <li class="nav-item px-1">
-              <a title="see total fines" href="" id="btnPrint" class="nav-link">
+            <li class="nav-item">
+              <a title="print reports" href="" id="btnPrint" class="nav-link">
                 <i class="fa fa-print"></i>reports
                 </a>
               </li>
@@ -64,7 +76,7 @@
             </li>
             <li class="nav-item">
               <a href="/admin/requests" class="nav-link">
-                  <i class="fa fa-bell"></i><span class="badge badge-danger badge-pill"><%=count_requests%></span>
+                  <i class="fa fa-bell faa-ring animated"></i><span class="badge badge-danger badge-pill"><%=count_requests%></span>
               </a>
             </li>
           </ul>

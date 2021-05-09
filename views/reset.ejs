@@ -14,7 +14,7 @@
           </div>
           <div class="card-block">
             <form class="p-3" action="/auth/reset" method="post">
-                <% include partials/alerts %>
+                <%- include ('partials/alerts') %>
                 <div class="form-group">
                   <label class="form-control-label" >username</label>
                   <input type="text" id="username" name="username" placeholder="username" class="form-control" required>

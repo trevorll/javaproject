@@ -1,7 +1,8 @@
 const Book = require('../models/book');
 const Request = require('../models/request');
 const Notification = require('../models/notifications');
-const PER_PAGE = 16;
+const Epdf = require('../models/epdf');
+const PER_PAGE = 12;
 
 
 
@@ -22,7 +23,7 @@ exports.getBooks = async(req, res, next) => {
   if(filter != 'all' && value != 'all') {
     searchObj[filter] = value;
   }
-
+  
   try{
     const books= await Book
     .find(searchObj)
@@ -34,7 +35,7 @@ exports.getBooks = async(req, res, next) => {
 
     res.render("books", {
       books:books,
-      curent: page,
+      current: page,
       pages: Math.ceil(count/PER_PAGE),
       filter: filter,
       value: value,
@@ -51,7 +52,8 @@ exports.findBooks = async(req, res, next) => {
   const count_requests = await Request.find().countDocuments();
   const count_notification = await Notification.find({"user_id.id": req.user.id}).countDocuments();
   var page = req.params.page ||1;
-  const filter = req.body.filter.toLowerCase() ;
+  const filter = req.body.filter;
+  const current = page;
   const value = req.body.searchName;
 
   if(value == "" || filter=="select filter..."){
@@ -89,6 +91,98 @@ exports.findBooks = async(req, res, next) => {
    try{
      const book_id = req.params.book_id;
      const book = await Book.findById(book_id).populate("comments");
+     res.render("user/BookDetails", {book: book, count_requests:count_requests, count_notification:count_notification,});
+   }catch(err) {
+     console.log(err);
+      res.redirect("back");;
+   }
+ };
+ exports.geteBooks = async(req, res, next) => {
+  const count_requests = await Request.find().countDocuments();
+  let count_notification;
+  var page = req.params.page || 1;
+  const filter = req.params.filter;
+  const value = req.params.value;
+  const current = page;
+  if(req.user.isAdmin){
+    count_notification = await Request.find({"user_id.id": req.user._id}).countDocuments();
+  }else{
+    count_notification = await Notification.find({"user_id.id": req.user._id}).countDocuments();
+  }
+
+  let searchObj = {};
+
+  if(filter != 'all' && value != 'all') {
+    searchObj[filter] = value;
+  }
+
+  try{
+    const ebooks= await Epdf
+    .find(searchObj)
+    .skip((PER_PAGE * page)-PER_PAGE)
+    .limit(PER_PAGE)
+
+
+    const count = await Epdf.find(searchObj).countDocuments();
+
+    res.render("ebooks", {
+      ebooks:ebooks,
+      current: page,
+      pages: Math.ceil(count/PER_PAGE),
+      filter: filter,
+      value: value,
+      user: req.user,
+      count_requests:count_requests,
+      count_notification:count_notification,
+    })
+  } catch(err) {
+    console.log(err);
+      res.redirect("back");
+  }
+},
+exports.findeBooks = async(req, res, next) => {
+  const count_requests = await Request.find().countDocuments();
+  const count_notification = await Notification.find({"user_id.id": req.user.id}).countDocuments();
+  var page = req.params.page ||1;
+  const filter = req.body.filter ;
+  const current = page;
+  const value = req.body.searchName;
+
+  if(value == "" || filter=="select filter..."){
+    req.flash("error", "Search field or Select field is empty. Please fill the search field to get books");
+    res.redirect("back");
+  }
+  const searchObj = {};
+  searchObj[filter] = value;
+  try{
+    const ebooks = await Epdf
+    .find(searchObj)
+    .skip((PER_PAGE * page) - PER_PAGE)
+    .limit(PER_PAGE)
+
+    const count = await Epdf.find(searchObj).countDocuments();
+
+    res.render("ebooks", {
+      ebooks : ebooks,
+      current: page,
+      pages: Math.ceil(count/PER_PAGE),
+      filter:filter,
+      value: value,
+      user: req.user,
+      count_requests:count_requests,
+      count_notification:count_notification,
+    })
+  } catch(err) {
+    console.log(err);
+      res.redirect("back");
+  }
+};
+ exports.geteBookDetails = async(req, res, next) => {
+   const count_requests = await Request.find().countDocuments();
+   const count_notification = await Notification.find({"user_id.id": req.user.id}).countDocuments();
+   try{
+     const ebook_id = req.params.book_id;
+     const ebook = await Book.findById(book_id).populate("comments");
      res.render("user/BookDetails", {book: book, count_requests:count_requests, count_notification:count_notification,});
    }catch(err) {
      console.log(err);

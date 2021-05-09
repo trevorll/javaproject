@@ -8,12 +8,15 @@ const Issue = require("../models/issue");
 const Activity = require("../models/activity");
 const Notification = require("../models/notifications");
 const Paidfines = require("../models/paidfines");
+const Epdf = require("../models/epdf");
 
 
 const deleteImage = require("../utils/delete_image");
 const user = require("../models/user");
 const paidfines = require("../models/paidfines");
 const { date } = require("faker");
+const { url } = require("inspector");
+const Pdf = require('express-pdf')
 
 const PER_PAGE = 10;
 
@@ -132,7 +135,7 @@ exports.getTotalFines = async(req, res, next) => {
       for(let issue of issues) { 
         total_fines += issue.book_info.amount;
         balance += issue.book_info.balance;
-            console.log(total_fines);
+            
             }
             
           
@@ -1075,8 +1078,71 @@ exports.postShowActivitiesByCategory = async (req, res, next) => {
       res.redirect('back');
   }
 };
+exports.getUploadpdf = async(req, res, next) => {
+  const count_requests = await Request.find().countDocuments();
+  res.render("admin/epdf",{
+    count_requests:count_requests
+  });
+}
+exports.postUploadpdf = async(req, res, next) => {
+  try{
+    const book_info = req.body.book;
+    book_info.description = req.sanitize(book_info.description);
+    let pdfUrl;
+    let filename;
+    if(req.files.book) {
+        pdfUrl = `${req.files.book[0].originalname}`;
+        filename = `books/${pdfUrl}`;
+        
+    }
+
+    const url = pdfUrl;
+    const book = new Epdf({
+      name: pdfUrl,
+      ISBN : book_info.ISBN,
+      author : book_info.author,
+      description : book_info.description,
+      category : book_info.category,
 
 
+    });
+    
+    
+    book_info.title = req.files.book[0].filename.split('.').slice(0, -1).join('.');
+
+    const isDuplicate = await Book.find(book_info);
+
+    if(isDuplicate.length > 0){
+      req.flash("error", "the book  already exists in the database");
+      return res.redirect('back');
+    }
+    const new_book = new Book(book_info);
+    await new_book.save();
+    await book.save();
+    req.flash("success", `You have added ${new_book.title} to the inventory`);
+    res.redirect("back");
+    } catch(err) {
+        console.log(err);
+        return res.redirect("back");
+    }
+}
+  //Delete book
+  exports.getDeleteBook = async(req,res,next)=>{
+    await Book.findByIdAndRemove(req.params.book_id);
+    req.flash("success", "successfully deleted");
+    return res.redirect("back");
+
+  }
+  exports.getreadPdf= (req, res)=> {
+    const dir = path.join(__dirname, '../books/');
+    var file = req.params.filename;
+    fs.readFile(dir + file, function (err, data) {
+    
+    res.contentType('application/pdf');
+    res.send(data);
+        
+    });
+};
 
 
  

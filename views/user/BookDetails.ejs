@@ -2,7 +2,7 @@
 
 
 <% if(currentUser.isAdmin){ %>
-  <%- ('include ../partials/adminNav') %>
+  <%- include ('../partials/adminNav') %>
 <%}else { %>
   <%- include('../partials/userNav') %>
 <% } %>

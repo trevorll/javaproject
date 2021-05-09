@@ -11,6 +11,7 @@ const User = require("../models/user"),
       Comment = require("../models/comment"),
       Notification = require("../models/notifications"),
       Request = require("../models/request");
+      Epdf = require("../models/epdf");
 
 // importing utilities
 const deleteImage = require('../utils/delete_image');
@@ -179,51 +180,71 @@ exports.putUpdatePassword = async(req, res, next) => {
 }
 //upload user image
 exports.postUploadUserImage = async(req, res, next) => {
+  
   try {
     const user_id = req.user._id;
     const user = await User.findById(user_id);
 
     let imgeurl;
-    if(req.file) {
-      imageUrl = `${uid()}__${req.file.originalname}`;
+    console.log(`${req.files.image[0].originalname}`);
+    if(req.files) {
+      imageUrl = `${uid.uid()}__${req.files.image[0].originalname}`;
       let filename =`images/${imageUrl}`;
-      let previousImagePath = `images/${user.image}`;
+     
 
 
-      const imageExist = fs.existsSync(previousImagePath);
+    
+    if(!imageUrl){
+      console.log(imageUrl);
+      req.flash("warning", "error occured in the Url");
+      res.redirect('back')
+    }else{
+      if(req.files.image[0].mimetype == "image/jpeg" || req.files.image[0].mimetype=== "image/png" || req.files.image[0].mimetype=== "images/png" || req.files.image[0].mimetype=== "images/jpg" ){
+        let previousImagePath = `images/${user.image}`;
+        const imageExist = fs.existsSync(previousImagePath);
 
       //check wheter the user profile picture already exists
-      if(imageExist) {
-        deleteImage(previousImagePath);
-      }
-      await sharp(req.file.path)
-          .rotate()
-          .resize(500, 500)
-          .toFile(filename);
-      fs.unlink(req.file.path, err => {
-        if(err) {
-          console.log("No image to delete");
+        if(imageExist) {
+          deleteImage(previousImagePath);
         }
-      })
-    }else {
-      imageUrl = '';
+        await sharp(req.files.image[0].path)
+            .rotate()
+            .resize(500, 500)
+            .toFile(filename);
+        fs.unlink(req.files.image[0].path, err => {
+          if(err) {
+            console.log("No image to delete");
+          }
+        })
+      
+      user.image = imageUrl;
+      await user.save();
+    // saving activity
+      const activity = new Activity({
+        category: "Uploaded New Profile Photo",
+        user_id: {
+          id: req.user.id,
+          username: req.user.username,
+        }
+      });
+      await activity.save();
+      res.redirect("/user/1/profile");
+    }else{
+        req.flash("warning", "error occured in the extension");
+        res.redirect('back')
     }
-    user.image = imageUrl;
-    await user.save();
-    //saving activity
-    const activity = new Activity({
-      category: "Uploaded New Profile Photo",
-      user_id: {
-        id: req.user.id,
-        username: req.user.username,
-      }
-    });
-    await activity.save();
-    res.redirect("/user/1/profile");
+  }
+}else{
+  console.log("Error");
+  res.redirect('back');
+}
+
+
   }catch(err) {
     console.log(err);
     res.redirect('back');
   }
+
 };
 
 //post a new comment on a book
@@ -267,6 +288,7 @@ exports.postNewComment = async(req, res, next) => {
       return res.redirect("back");
     }
   };
+
   //update existing comment
   exports.postUpdateComment = async(req, res, next) => {
     try{
@@ -658,4 +680,13 @@ exports.postNewComment = async(req, res, next) => {
 
     });
   }
-  
+  exports.getreadPdf= (req, res)=> {
+    const dir = path.join(__dirname, '../books/');
+    var file = req.params.filename;
+    fs.readFile(dir + file, function (err, data) {
+    
+    res.contentType('application/pdf');
+    res.send(data);
+        
+    });
+};

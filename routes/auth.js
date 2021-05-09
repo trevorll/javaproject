@@ -15,7 +15,7 @@ const Admin = require("../models/admin");
 router.get('/', authController.getLandingPage);
 
 //admin login handler
-router.get("/auth/admin-login", authController.getAdminLoginPage)
+router.get("/auth/admin-login", authController.getAdminLoginPage);
 
 
 router.post("/auth/admin-login", passport.authenticate("local", {

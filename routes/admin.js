@@ -68,6 +68,7 @@ router.get("/admin/fine/users", middleware.isAdmin, adminController.getTotalFine
 
 //admin -> update book
 router.post("/admin/book/update/:book_id", middleware.isAdmin, adminController.postUpdateBook);
+router.get("/admin/book/delete/:book_id", middleware.isAdmin,adminController.getDeleteBook);
 router.get("/admin/book/update/:book_id", middleware.isAdmin, adminController.getUpdateBook);
 router.post("/admin/details/:book_id/comment", middleware.isAdmin, adminController.postNewComment);
 router.post("/admin/details/:book_id/:comment_id", middleware.isAdmin, adminController.postUpdateComment);
@@ -77,6 +78,10 @@ router.get("/admin/users/activities/:user_id/:page", middleware.isAdmin, adminCo
 router.post("/admin/users/activities/:user_id/:page", middleware.isAdmin, adminController.postShowActivitiesByCategory);
 router.get("/admin/users/activity/:user_id/:category/:page", middleware.isAdmin, adminController.postShowActivitiesByCategory);
 router.post("/admin/users/activity/:user_id/:category/:page", middleware.isAdmin, adminController.postShowActivitiesByCategory);
+//uploading an ebook
+router.post("/admin/upload/epdf", middleware.isAdmin, adminController.postUploadpdf);
+router.get("/admin/upload/epdf", middleware.isAdmin, adminController.getUploadpdf);
+router.get('/admin/read/:filename',middleware.isAdmin,adminController.getreadPdf);
 
 
 

@@ -1,6 +1,8 @@
 const express = require("express");
       // mpesa = require("mpesa-node");
       // mpesasdk = require("mpesa-node-sdk");
+      pdf =require('express-pdf')
+      mime = require('mime-type');
       dotenv = require("dotenv");
       app = express();
       bodyParser = require("body-parser");
@@ -18,6 +20,7 @@ const express = require("express");
       User = require("./models/user");
       Admin = require("./models/admin");
       Issue = require("./models/issue");
+      Epdf = require("./models/epdf");
       Request = require("./models/request");
       Paidfine = require("./models/paidfines");
       userRoutes = require("./routes/users");
@@ -39,11 +42,15 @@ app.use(bodyParser.urlencoded({extended : true}));
 app.use(sanitizer());
 console.log(process.env.name);
 
+
 //db config
 const url = process.env.db_url || "mongodb://localhost/db1";
 mongoose.connect(url, {useNewUrlParser : true, useCreateIndex: true, useUnifiedTopology: true,});
 
 mongoose.set('useFindAndModify', false);
+app.use(pdf);
+// console.log(pdf.PDF);
+
 
 //passport config
 app.use(require("express-session")({
@@ -63,27 +70,81 @@ passport.deserializeUser(User.deserializeUser());
 
 
 //config image file storage
+// const fileStorage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, 'books'); 
+//   },
+//   filename: (req, file, cb) => {
+    
+//     cb(null, `${file.originalname}`);   
+//   }
+// });
+// const filefilter = (req, file, cb) => {
+//   if(file) {
+//   if(
+//       path.extname(req.file.originalname)  === 'image/jpg' ||
+//       path.extname(req.file.originalname)  === 'image/png' ||
+//       path.extname(req.file.originalname)  === 'image/jpeg'||
+//       path.extname(req.file.originalname)  === 'application/pdf'
+
+//     ) { cb(null, true);
+//     } else {
+//       cb(null, false);
+//     }
+//   }
+  
+// };
+
+// app.use(multer({storage: fileStorage, filefilter: filefilter()}).single('book'));
+  
+// app.use('/books', express.static(path.join(__dirname, 'book')));
+
+
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'images');
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${uid()}-${file.originalname}`);
+    if(file.fieldname === "image"){
+      cb(null, 'images');
+  }else if(file.fieldname === "book"){
+    cb(null, 'books')
   }
+ } ,
+  filename: (req, file, cb) => {
+    if(file.fieldname === "image"){
+    cb(null, `${uid.uid()}-${file.originalname}`);
+  }else if(file.fieldname ==="book"){
+    cb(null, `${file.originalname}`)
+  }
+}
 });
 const filefilter = (req, file, cb) => {
-  if(
-      file.mimetype === 'images/png' ||
-      file.mimetype === 'image/png' ||
-      file.mimetype === 'img.jpeg'
-    ) { cb(null, true);
-    } else {
-      cb(null, false);
+  if(file){
+      if(req.file.fieldname ==="image"){
+        if(
+          path.extname(req.file.originalname)  === 'image/jpg' ||
+          path.extname(req.file.originalname)  === 'image/png' ||
+          path.extname(req.file.originalname)  === 'image/jpeg'
+          ) { cb(null, true);
+          } else {
+          cb(null, false);
+          }
+        }else if(req.file.fieldname === "book"){
+          if(
+            path.extname(req.file.originalname)  === 'application/pdf'
+          ) { cb(null, true); 
+          } else {
+                  cb(null, false);
+                }
+        }
     }
-
-};
-app.use(multer({storage: fileStorage, filefilter: filefilter}).single('image'));
+  
+}
 app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/books', express.static(path.join(__dirname, 'books')));
+app.use(multer({storage: fileStorage, filefilter: filefilter()}).fields([{name:'image',maxCount:1},{name:'book',maxCount:1}]));
+
+
+
+
 
 app.use((req, res, next) => {
   res.locals.currentUser =req.user;

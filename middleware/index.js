@@ -29,10 +29,10 @@ middleware.isAdmin = function(req, res, next) {
 
 };
 
-middleware.upload = multer({
-  limits: {
-    fileSize: 4 * 1024 * 1024,
-  }
-});
+// middleware.upload = multer({
+//   limits: {
+//     fileSize: 4 * 1024 * 1024,
+//   }
+// });
 
 module.exports = middleware;

@@ -49,6 +49,7 @@ router.delete("/user/details/:book_id/:comment_id", middleware.isLoggedIn, userC
 // user -> delete user account
 router.delete("/user/1/delete-profile", middleware.isLoggedIn, userController.deleteMyAccount);
 router.delete("/user/1/notification/:notification_id", middleware.isLoggedIn, userController.deleteNotification);
+router.get('/user/read/:filename',middleware.isLoggedIn,userController.getreadPdf);
 
 
 
